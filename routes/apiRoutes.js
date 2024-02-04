@@ -26,7 +26,7 @@ const acceptAccess = {
 }
 
 // Здесь вы определяете маршруты API
-router.get('/get-tasks', async (req, res) => {
+router.get('/bot/get-tasks', async (req, res) => {
    const {user , chat} = req.query;
    if(!user || !chat) {
       res.setHeader('Content-Type', 'application/json');
@@ -53,7 +53,7 @@ router.get('/get-tasks', async (req, res) => {
 
 });
 
-router.post('/create-task', async (req, res) => {
+router.post('/bot/create-task', async (req, res) => {
    const dataFromBody = req.body;
    const {project} = req.query;
    const task = await webAppController.prepareTask(dataFromBody, project);
