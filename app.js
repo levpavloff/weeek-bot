@@ -74,7 +74,7 @@ connectDB()
                         return Buffer.from(data, 'utf-8').toString('base64');
                     }
                     const encodedData = encodeYourData(`{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`);
-
+                    console.log(encodedData);
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
                     const deeplink = `https://t.me/${botUsername}?start=${encodedData}`;
