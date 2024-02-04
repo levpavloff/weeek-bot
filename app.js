@@ -80,10 +80,10 @@ connectDB()
 
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
-                    const deeplink = `https://t.me/${botUsername}?start=${encodedData}`;
-                    console.log(`Сформирован код: ${encodedData}`);
+                    const deeplink = `https://t.me/${botUsername}?start=${encodedData}&time=${Date.now()}`;
+                    console.log(`Сформирован код: ${deeplink}`);
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
-                    await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:\n\n${encodedData}`, {
+                    await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
                         reply_markup: {
                             inline_keyboard: [[
                                 {
