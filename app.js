@@ -43,7 +43,7 @@ connectDB()
             if (payload) {
                 let separatePayload = payload.split(':')[0];
                 const decodedData = Buffer.from(payload, 'base64').toString('utf8');
-                generateApp(ctx, decodedData);
+                chatController.generateApp(ctx, decodedData);
                 console.log(JSON.parse(decodedData)); // Теперь вы можете использовать расшифрованные данные
             } else {
                 ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS')
@@ -75,14 +75,14 @@ connectDB()
                         return Buffer.from(data, 'utf-8').toString('base64');
                     }
                     const encodedData = encodeYourData(`{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`);
-                    console.log(encodedData);
+                    const obj = `{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`;
 
 
 
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
-                    const deeplink = `https://t.me/${botUsername}?start=${encodedData}:${Date.now()}`;
-                    console.log(`Сформирован код: ${deeplink}`);
+                    const deeplink = `https://t.me/${botUsername}`;
+                    const send = await chatController.generateApp(ctx, obj);
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
                         reply_markup: {
