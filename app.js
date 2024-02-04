@@ -76,7 +76,7 @@ connectDB()
                     const encodedData = encodeYourData(`{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`);
 
                     // Создание deeplink
-                    const botUsername = 'toooooaaaabot';
+                    const botUsername = 'humans_projectbot';
                     const deeplink = `https://t.me/${botUsername}?start=${encodedData}`;
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply('Для продолжения перейдите в приватный чат с ботом:', {
