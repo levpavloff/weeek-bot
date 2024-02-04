@@ -121,7 +121,7 @@ connectDB()
             console.log(`Server is running on port ${port}`);
 
             // Устанавливаем вебхук для бота
-            bot.telegram.setWebhook(`https://cad5-87-116-134-193.ngrok-free.app/telegram-webhook`);
+            bot.telegram.setWebhook(`https://s1.hmns.in/bot/telegram-webhook`);
             console.log(`Webhook has been set up.`);
         });
     })
