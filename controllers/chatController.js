@@ -1,5 +1,5 @@
 const Chat = require('../models/chatModel');
-const Session = require('../models/SessionModel');
+const Session = require('../models/sessionModel');
 const Admin = require('../models/adminModel');
 const projectService = require('../services/projectService');
 const boardService = require('../services/boardService');
@@ -33,6 +33,22 @@ async function getSession(userId) {
         }
     } catch (error) {
         console.error('Ошибка при поиске chat_id по update_id:', error);
+        return null;
+    }
+}
+
+async function removeSession(userId){
+    try {
+        const session = await Session.findOne({ chat_id: userId });
+        if (session) {
+            await Session.findOneAndDelete({ chat_id: userId });
+            return true
+        } else {
+            return null;
+
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске chat_id:', error);
         return null;
     }
 }
@@ -158,6 +174,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
         await Chat.updateOne({ chat_id: groupChatId }, { $set: { 'project.id': projectId, 'project.name': projectName, 'users': adminsId } });
         console.log('Проект успешно обновлен.');
         await ctx.telegram.sendMessage(groupChatId, `Проект ${projectName} успешно подключен к этому чату \n\n Нажмите /task, чтобы добавлять задачи.`);
+        await removeSession(userId);
     } catch (error) {
         console.error(error);
         console.log('Произошла ошибка при обновлении проекта.');
@@ -231,6 +248,7 @@ module.exports = {
     checkAccess,
     generateApp,
     sendResMsg,
-    sendMessageToTelegram
+    sendMessageToTelegram,
+    removeSession
 
 };
