@@ -77,6 +77,7 @@ connectDB()
                     console.log(encodedData);
 
 
+
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
                     const deeplink = `https://t.me/${botUsername}?start=${encodedData}`;
