@@ -22,6 +22,6 @@ jobs:
           ssh-keyscan -H 185.185.70.149 >> ~/.ssh/known_hosts
 
       - name: Sync with remote
-  run: |
-    rsync -avz --delete --exclude '.git/' --exclude '.github/' ./ levpavloff@185.185.70.149:/var/www/projects/bot
-    ssh levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull origin main && npm install && pm2 restart all'
+        run: |
+          rsync -avz --delete --exclude '.git/' --exclude '.github/' ./ levpavloff@185.185.70.149:/var/www/projects/bot
+          ssh levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull origin main && npm install && pm2 restart all'
