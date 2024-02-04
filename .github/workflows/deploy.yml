@@ -1,27 +1,19 @@
-name: Weeek bot humans
+name: Bot Weeek
 
 on:
   push:
     branches:
-      - main # Или любая другая ветка, которая используется для развертывания
+      - main # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add SSH key to known_hosts
+      - name: Execute deployment commands
         run: |
-          ssh-keyscan -H 185.185.70.149 >> ~/.ssh/known_hosts
-
-      - name: Sync with remote
-        run: |
-          rsync -avz --exclude '.git/' --exclude '.github/' --exclude '.env' ./ levpavloff@185.185.70.149:/var/www/projects/bot
-          ssh levpavloff@185.185.70.149 'cd /var/www/projects/bot && git fetch --all && git reset --hard origin/main && git clean -df && npm install && pm2 restart all'
+          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull'
