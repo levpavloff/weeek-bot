@@ -41,6 +41,7 @@ connectDB()
             const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
 
             if (payload) {
+                let separatePayload = payload.split(':')[0];
                 const decodedData = Buffer.from(payload, 'base64').toString('utf8');
                 generateApp(ctx, decodedData);
                 console.log(JSON.parse(decodedData)); // Теперь вы можете использовать расшифрованные данные
@@ -80,7 +81,7 @@ connectDB()
 
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
-                    const deeplink = `https://t.me/${botUsername}?start=${encodedData}&time=${Date.now()}`;
+                    const deeplink = `https://t.me/${botUsername}?start=${encodedData}:${Date.now()}`;
                     console.log(`Сформирован код: ${deeplink}`);
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
