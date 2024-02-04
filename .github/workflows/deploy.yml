@@ -1,23 +1,19 @@
-name: Deploy Telegram Weeek
+name: Bot Weeek
 
 on:
   push:
     branches:
-      - main
+      - main # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Deploy to Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_NAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /var/www/projects/bot
-          git pull
-          npm install
-          pm2 restart all
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Execute deployment commands
+        run: |
+          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull origin main'
