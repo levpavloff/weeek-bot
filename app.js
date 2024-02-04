@@ -123,6 +123,7 @@ connectDB()
             // Устанавливаем вебхук для бота
             bot.telegram.setWebhook(`https://s1.hmns.in/bot/telegram-webhook`);
 
+
             console.log(`Webhook has been set up.`);
         });
     })
