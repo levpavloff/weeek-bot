@@ -1,23 +1,23 @@
-name: Deploy Telegram Weeek
+name: Weeek bot app
 
 on:
   push:
     branches:
-      - main
+      - main # Или любая другая ветка, которая используется для развертывания
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Deploy to Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_NAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /var/www/projects/bot
-          git pull
-          npm install
-          pm2 restart all
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Sync with remote
+        run: |
+          rsync -avz --delete --exclude '.git/' --exclude '.github/' ./ levpavloff@185.185.70.149:/var/www/projects/bot
+          ssh levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull && npm install && pm2 restart all'
