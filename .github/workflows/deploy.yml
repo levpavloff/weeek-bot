@@ -23,5 +23,5 @@ jobs:
 
       - name: Sync with remote
         run: |
-          rsync -avz --delete --exclude '.git/' --exclude '.github/' ./ levpavloff@185.185.70.149:/var/www/projects/bot
+          rsync -avz --delete --exclude '.git/' --exclude '.github/' --exclude '.env' ./ levpavloff@185.185.70.149:/var/www/projects/bot
           ssh levpavloff@185.185.70.149 'cd /var/www/projects/bot && git fetch --all && git reset --hard origin/main && git clean -df && npm install && pm2 restart all'
