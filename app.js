@@ -9,7 +9,7 @@ const apiRoutes = require('./routes/apiRoutes');
 
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 2517;
 
 
 // Используем bodyParser для обработки JSON-запросов
