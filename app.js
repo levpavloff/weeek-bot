@@ -28,7 +28,7 @@ connectDB()
         app.use(apiRoutes);
 
         // Монтируем маршрут для обработки вебхук-запросов от Telegram
-        app.post('/telegram-webhook', (req, res) => {
+        app.post('/bot/telegram-webhook', (req, res) => {
             const update = req.body;
             bot.handleUpdate(update, res);
         });
