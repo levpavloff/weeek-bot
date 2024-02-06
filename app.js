@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { Telegraf } = require('telegraf');
 const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
-const {getDetails, generateApp} = require("./controllers/chatController"); // Импортируйте функцию подключения
+const {getDetails} = require("./controllers/chatController"); // Импортируйте функцию подключения
 const apiRoutes = require('./routes/apiRoutes');
 
 
@@ -16,8 +16,8 @@ const port = process.env.PORT || 2517;
 
 app.use(bodyParser.json());
 
-let adminArray = [];
-const adminTelegramId = process.env.ADMIN;
+
+// const adminTelegramId = process.env.ADMIN;
 
 // Подключение к базе данных
 connectDB()
@@ -41,7 +41,6 @@ connectDB()
             const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
 
             if (payload) {
-                let separatePayload = payload.split(':')[0];
                 const decodedData = Buffer.from(payload, 'base64').toString('utf8');
                 chatController.generateApp(ctx, decodedData);
                 console.log(JSON.parse(decodedData)); // Теперь вы можете использовать расшифрованные данные
@@ -75,11 +74,11 @@ connectDB()
                         return Buffer.from(data, 'utf-8').toString('base64');
                     }
                     const encodedData = encodeYourData(`{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`);
-                    const obj = `{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`;
+                    //const obj = `{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`;
 
 
                     // Создание deeplink
-                    const deeplink = `https://t.me/humans_projectbot`;
+                    const deeplink = `https://t.me/humans_projectbot?start=${encodedData}`;
 
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
