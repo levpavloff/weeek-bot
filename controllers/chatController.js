@@ -241,7 +241,6 @@ module.exports = {
     checkAdmin,
     getDetails,
     checkAccess,
-    generateApp,
     sendResMsg,
     sendMessageToTelegram,
     removeSession
