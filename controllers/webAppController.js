@@ -2,7 +2,6 @@ const Chat = require('../models/chatModel');
 const columnService = require('../services/columnService');
 const { Markup } = require('telegraf');
 
-const adminTelegramId = process.env.ADMIN;
 
 async function prepareTask(params, project) {
     const projectId = project;

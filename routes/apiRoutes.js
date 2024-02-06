@@ -1,14 +1,32 @@
-// apiRoutes.js
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const Chat = require('../models/chatModel');
 const chatController = require('../controllers/chatController');
 const tasksService = require('../services/tasksService');
 const webAppController = require('../controllers/webAppController');
+const axios = require('axios');
 const {json} = require("express");
 const { Telegraf } = require('telegraf');
 
+const botToken = process.env.BOT_TOKEN;
 
+
+async function checkTgAdmins(chatId, userId) {
+   try {
+      const apiUrl = `https://api.telegram.org/bot${botToken}/getChatAdministrators?chat_id=${chatId}`;
+      const response = await axios.get(apiUrl);
+      const adminsId = response.result.map(admin => {
+         return admin.user.id;
+      })
+      await Chat.updateOne({chat_id: chatId}, {$set: {users: adminsId}});
+      return !!adminsId.includes(userId);
+
+   } catch (error) {
+      // Обработка ошибок отправки
+      console.error('Ошибка прямого запроса админов группы', error);
+   }
+}
 
 
 const errorAccess = {
@@ -33,17 +51,20 @@ router.get('/bot/get-tasks', async (req, res) => {
       res.status(200).json(errorAccess);
    }
    try {
+      const isAdmin = await checkTgAdmins(chat, user);
       const chatBD = await Chat.findOne({chat_id: chat});
       if(!chatBD) {
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
       }
-      if(!chatBD.users.includes(user)) {
+      if(!chatBD.users.includes(user) || !isAdmin) {
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
       }
       acceptAccess.project = chatBD.project.name;
       acceptAccess.id = chatBD.project.id;
+      acceptAccess.user = user;
+      acceptAccess.chat = chat;
       acceptAccess.tasks = await tasksService.getTasks(chatBD.project.id);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(acceptAccess);
@@ -52,6 +73,7 @@ router.get('/bot/get-tasks', async (req, res) => {
    }
 
 });
+
 
 router.post('/bot/create-task', async (req, res) => {
    const dataFromBody = req.body;
