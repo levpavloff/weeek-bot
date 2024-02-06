@@ -200,7 +200,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
             reply_markup: {
                 inline_keyboard: [[
                     {
-                        text: 'Открыть приложение',
+                        text: 'Поставить задачу ✅',
                         url: `https://t.me/humans_projectbot/humans_projects?startapp=${encodedData}`
                     }
                 ]]
