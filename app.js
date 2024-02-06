@@ -73,7 +73,7 @@ connectDB()
             if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
                 const access = await chatController.checkAccess(ctx);
                 if(access) {
-                    /*
+
                     function encodeYourData(data) {
                         return Buffer.from(data, 'utf-8').toString('base64');
                     }
@@ -82,17 +82,17 @@ connectDB()
 
 
                     // Создание deeplink
-                    const deeplink = `https://t.me/humans_projectbot?start=${encodedData}`;
-*/
+                    //const deeplink = `https://t.me/humans_projectbot?start=${encodedData}`;
 
-                    const webAppUrl = `https://s1.hmns.in/webapp?chat=${ctx.chat.id}&user=${ctx.message.from.id}`;
+
+                    //const webAppUrl = `https://s1.hmns.in/webapp?chat=${ctx.chat.id}&user=${ctx.message.from.id}`;
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
                         reply_markup: {
                             inline_keyboard: [[
                                 {
                                     text: 'Поставить задачу',
-                                    web_app: {url: webAppUrl}
+                                    url: `https://t.me/humans_projectbot/humans_projects?startapp=${encodedData}`
                                 }
                             ]]
                         }
