@@ -10,6 +10,7 @@ const adminTelegramId = process.env.ADMIN;
 const botToken = process.env.BOT_TOKEN;
 
 // *** РАБОТА С СЕССИЕЙ ***
+// Доп коммент
 
 // Cохранение сессии для текущего пользователя
 // Заводим в базу БД о том, что текущий пользователь подключает чат
