@@ -38,7 +38,10 @@ connectDB()
         // Обработка команды /start (пример)
         bot.command('start', (ctx) => {
             // Получаем payload из аргумента команды /start
-            const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
+            ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS')
+
+
+            /*const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
 
             if (payload) {
                 const decodedData = Buffer.from(payload, 'base64').toString('utf8');
@@ -46,7 +49,7 @@ connectDB()
                 console.log(JSON.parse(decodedData)); // Теперь вы можете использовать расшифрованные данные
             } else {
                 ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS')
-            }
+            }*/
         });
 
 
@@ -70,6 +73,7 @@ connectDB()
             if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
                 const access = await chatController.checkAccess(ctx);
                 if(access) {
+                    /*
                     function encodeYourData(data) {
                         return Buffer.from(data, 'utf-8').toString('base64');
                     }
@@ -79,14 +83,16 @@ connectDB()
 
                     // Создание deeplink
                     const deeplink = `https://t.me/humans_projectbot?start=${encodedData}`;
+*/
 
+                    const webAppUrl = `https://s1.hmns.in/webapp?chat=${ctx.chat.id}&user=${ctx.message.from.id}`;
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
                         reply_markup: {
                             inline_keyboard: [[
                                 {
                                     text: 'Поставить задачу',
-                                    url: deeplink
+                                    web_app: {url: webAppUrl}
                                 }
                             ]]
                         }
