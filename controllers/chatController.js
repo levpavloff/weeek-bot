@@ -200,6 +200,7 @@ const generateApp = async (ctx, data) => {
     const params = JSON.parse(data);
     if(params.chat_id && params.user_id) {
         const webAppUrl = `https://s1.hmns.in/webapp?chat=${params.chat_id}&user=${params.user_id}`;
+        console.log(webAppUrl);
 
         // Отправка сообщения с кнопкой для открытия Web App
         await ctx.reply('Откройте приложение, чтобы поставить задачу \n\n<i>Вы можете использовать одну и ту же кнопку для постановки задач в этом же проекте.</i>', {
