@@ -16,4 +16,4 @@ jobs:
 
       - name: Execute deployment commands
         run: |
-          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull origin main'
+          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 'cd /var/www/projects/bot && git pull origin main && pm2 restart all'
