@@ -61,7 +61,7 @@ router.get('/bot/get-tasks', async (req, res) => {
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
       }
-      if(!chatBD.users.includes(user) || !isAdmin) {
+      if(!chatBD.users.includes(user)) {
          console.log(`Не админ`);
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
