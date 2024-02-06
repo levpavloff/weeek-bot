@@ -38,6 +38,8 @@ const errorAccess = {
 const acceptAccess = {
    access: true,
    code: 200,
+   user: null,
+   chat: null,
    project: null,
    id: null,
    tasks: []
