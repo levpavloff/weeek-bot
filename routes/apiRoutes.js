@@ -16,7 +16,6 @@ async function checkTgAdmins(chatId, userId) {
    try {
       const apiUrl = `https://api.telegram.org/bot${botToken}/getChatAdministrators?chat_id=${chatId}`;
       const response = await axios.get(apiUrl);
-      console.log(response.data.result);
       const adminsId = response.data.result.map(admin => {
          return admin.user.id;
       })
@@ -60,11 +59,13 @@ router.get('/bot/get-tasks', async (req, res) => {
          console.log(`Нет чата`);
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
+         return
       }
       if(!chatBD.users.includes(user)) {
          console.log(`Не админ`);
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
+         return
       }
       acceptAccess.project = chatBD.project.name;
       acceptAccess.id = chatBD.project.id;
