@@ -5,9 +5,11 @@ const { Telegraf } = require('telegraf');
 const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
+const cors = require('cors');
 
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 2517;
 
 
