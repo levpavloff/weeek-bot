@@ -87,15 +87,15 @@ connectDB()
 
                     //const webAppUrl = `https://s1.hmns.in/webapp?chat=${ctx.chat.id}&user=${ctx.message.from.id}`;
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
-                    await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
+                    await ctx.reply(`Откройте приложение, чтобы поставить задачу \n\n<i>Вы можете использовать одну и ту же кнопку для постановки задач в этом же проекте.</i>`, {
                         reply_markup: {
                             inline_keyboard: [[
                                 {
-                                    text: 'Поставить задачу',
+                                    text: 'Открыть приложение',
                                     url: `https://t.me/humans_projectbot/humans_projects?startapp=${encodedData}`
                                 }
                             ]]
-                        }
+                        },  parse_mode: 'HTML'
                     });
                 }
             } else {
