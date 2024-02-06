@@ -16,6 +16,7 @@ async function checkTgAdmins(chatId, userId) {
    try {
       const apiUrl = `https://api.telegram.org/bot${botToken}/getChatAdministrators?chat_id=${chatId}`;
       const response = await axios.get(apiUrl);
+      console.log(response);
       const adminsId = response.result.map(admin => {
          return admin.user.id;
       })
