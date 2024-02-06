@@ -185,7 +185,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
            chat = await Chat.updateOne({ 'project.id': projectId }, { $set: {chat_id: groupChatId, 'project.name': projectName, 'users': adminsId  } });
         }
         console.log('Проект успешно обновлен.');
-        await chat.save();
+        chat.save();
 
         await getDetails(ctx, projectId);
         await removeSession(userId);
