@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const { Telegraf } = require('telegraf');
 const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
-const {getDetails} = require("./controllers/chatController"); // Импортируйте функцию подключения
 const apiRoutes = require('./routes/apiRoutes');
 
 
@@ -57,7 +56,7 @@ connectDB()
         bot.command('addchat', async (ctx) => {
             if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
             if (await chatController.checkAdmin(ctx)) {
-                chatController.addChat(ctx);
+                await chatController.addChat(ctx);
             } else {
                 // Если пользователь не администратор, можно отправить сообщение или выполнить другие действия.
                 ctx.reply('Вы не являетесь администратором.');
@@ -68,43 +67,6 @@ connectDB()
             }
         });
 
-        bot.command('task', async (ctx) => {
-            // Проверяем, что команда вызвана в групповом чате
-            if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
-                const access = await chatController.checkAccess(ctx);
-                if(access) {
-
-                    function encodeYourData(data) {
-                        return Buffer.from(data, 'utf-8').toString('base64');
-                    }
-                    const encodedData = encodeYourData(`{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`);
-                    //const obj = `{"chat_id":"${ctx.chat.id}", "user_id":"${ctx.message.from.id}"}`;
-
-
-                    // Создание deeplink
-                    //const deeplink = `https://t.me/humans_projectbot?start=${encodedData}`;
-
-
-                    //const webAppUrl = `https://s1.hmns.in/webapp?chat=${ctx.chat.id}&user=${ctx.message.from.id}`;
-                    // Отправляем кнопку со ссылкой на приватный чат с ботом
-                    await ctx.reply(`Откройте приложение, чтобы поставить задачу \n\n<i>Вы можете использовать одну и ту же кнопку для постановки задач в этом же проекте.</i>`, {
-                        reply_markup: {
-                            inline_keyboard: [[
-                                {
-                                    text: 'Открыть приложение',
-                                    url: `https://t.me/humans_projectbot/humans_projects?startapp=${encodedData}`
-                                }
-                            ]]
-                        },  parse_mode: 'HTML'
-                    });
-                }
-            } else {
-                // Опционально: сообщение пользователю, если команда вызвана не в групповом чате
-                await ctx.reply('Эта команда доступна только в групповых чатах.');
-            }
-        });
-
-
 
         // Обработчик колбэков для выбора проекта
         bot.action(/^project_(.*):(.*)$/, (ctx) => {
@@ -114,11 +76,7 @@ connectDB()
             // Теперь у вас есть доступ к projectId и projectName для дальнейшей обработки
             chatController.updateChatProject(ctx, projectId, projectName);
             ctx.editMessageText(`Проект ${projectName} (${projectId}) успешно выбран.`);
-            getDetails(projectId);
         });
-
-
-
 
 
         // Запуск сервера
