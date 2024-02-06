@@ -81,7 +81,7 @@ const addChat = async (ctx) => {
 
         const projects = await projectService.getProjects();
         if (projects.length === 0) {
-            await ctx.telegram.sendMessage(adminTelegramId, 'Не удалось получить список проектов.');
+            await ctx.telegram.sendMessage(userId, 'Не удалось получить список проектов.');
             return;
         }
         const buttons = projects.map((project) => {
