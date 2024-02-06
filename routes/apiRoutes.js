@@ -47,17 +47,21 @@ const acceptAccess = {
 router.get('/bot/get-tasks', async (req, res) => {
    const {user , chat} = req.query;
    if(!user || !chat) {
+      console.log('Нет параметра');
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(errorAccess);
    }
    try {
+      console.log(`Чат ${chat}, юзер ${user}`);
       const isAdmin = await checkTgAdmins(chat, user);
       const chatBD = await Chat.findOne({chat_id: chat});
       if(!chatBD) {
+         console.log(`Нет чата`);
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
       }
       if(!chatBD.users.includes(user) || !isAdmin) {
+         console.log(`Не админ`);
          res.setHeader('Content-Type', 'application/json');
          res.status(200).json(errorAccess);
       }
