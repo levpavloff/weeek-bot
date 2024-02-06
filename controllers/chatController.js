@@ -9,6 +9,10 @@ const axios = require('axios');
 const adminTelegramId = process.env.ADMIN;
 const botToken = process.env.BOT_TOKEN;
 
+// *** РАБОТА С СЕССИЕЙ ***
+
+// Cохранение сессии для текущего пользователя
+// Заводим в базу БД о том, что текущий пользователь подключает чат
 async function saveSession(userId, updateId, groupId, messageId) {
     try {
         let session = await Session.findOne({chat_id:userId});
@@ -22,13 +26,15 @@ async function saveSession(userId, updateId, groupId, messageId) {
     }
 }
 
+// Запрос сессии по ID телеграм-юзера
+// Вытаскиваем из БД объект сессии
 async function getSession(userId) {
     try {
         const session = await Session.findOne({ chat_id: userId });
         if (session) {
             return session;
         } else {
-            return null; // Или обработайте случай, когда чат не найден
+            return null;
 
         }
     } catch (error) {
@@ -37,6 +43,8 @@ async function getSession(userId) {
     }
 }
 
+// Удаление сессии по ID телеграм-юзера
+// Удаляем из БД объект сессии после завершения подключения чата
 async function removeSession(userId){
     try {
         const session = await Session.findOne({ chat_id: userId });
@@ -53,7 +61,9 @@ async function removeSession(userId){
     }
 }
 
-// Функция для добавления чата или обновления проекта
+
+// *** РАБОТА С ПРОЕКТОМ ***
+// Добавление чата или обновления проекта
 const addChat = async (ctx) => {
     const userId = ctx.message.from.id;
     const chatId = ctx.chat.id;
@@ -96,6 +106,7 @@ const addChat = async (ctx) => {
     }
 };
 
+// Запрос деталей для сохранения досок проекта
 const getDetails = async(projectId) => {
     try {
         let chat = await Chat.findOne({ "project.id": projectId });
@@ -107,9 +118,7 @@ const getDetails = async(projectId) => {
         chat.project.boards = boardsRaw.map(board => {
             return {id: board.id, name: board.name}
         });
-
         chat.save();
-
 
     } catch (error) {
         console.error(error);
@@ -117,6 +126,7 @@ const getDetails = async(projectId) => {
     }
 }
 
+// Проверка, является ли пользователь администратором бота
 const checkAdmin = async (ctx) => {
     const userId = ctx.message.from.id;
     try {
@@ -134,6 +144,8 @@ const checkAdmin = async (ctx) => {
     }
 }
 
+
+// Проверка, является ли пользователь администратором в группе (права добавлять задачи)
 const checkAccess = async (ctx) => {
     const chatId = ctx.message.chat.id;
     const userId = ctx.message.from.id;
@@ -181,6 +193,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
     }
 };
 
+// Функция для создания ссылки на приложение
 const generateApp = async (ctx, data) => {
     // Парсинг входных данных
     const params = JSON.parse(data);
@@ -202,6 +215,7 @@ const generateApp = async (ctx, data) => {
     }
 }
 
+// Функция для отправке в группу уведомления о поставленной задаче
 async function sendResMsg(project, data) {
     try{
         const chat = await Chat.findOne({'project.id': project});
@@ -219,6 +233,7 @@ async function sendResMsg(project, data) {
 
 }
 
+// Функция для прямой отправки сообщения в телеграм
 async function sendMessageToTelegram(chatId, text) {
     try {
         const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;

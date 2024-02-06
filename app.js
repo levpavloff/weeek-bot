@@ -81,7 +81,7 @@ connectDB()
 
                     // Создание deeplink
                     const botUsername = 'humans_projectbot';
-                    const deeplink = `https://t.me/${botUsername}`;
+                    const deeplink = `https://t.me/humans_projectbot`;
                     const send = await chatController.generateApp(ctx, obj);
                     // Отправляем кнопку со ссылкой на приватный чат с ботом
                     await ctx.reply(`Для продолжения перейдите в приватный чат с ботом:`, {
