@@ -181,11 +181,12 @@ const updateChatProject = async (ctx, projectId, projectName) => {
             await Chat.findOneAndDelete({chat_id: groupChatId});
             // Если чат не существует, создаем новый
             chat = new Chat({ chat_id: groupChatId, 'project.id': projectId, 'project.name': projectName, 'users': adminsId });
+            await chat.save();
+
         } else {
            chat = await Chat.updateOne({ 'project.id': projectId }, { $set: {chat_id: groupChatId, 'project.name': projectName, 'users': adminsId  } });
         }
         console.log('Проект успешно обновлен.');
-        chat.save();
 
         await getDetails(ctx, projectId);
         await removeSession(userId);
