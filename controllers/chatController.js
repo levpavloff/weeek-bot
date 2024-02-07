@@ -224,6 +224,7 @@ async function sendResMsg(project, data) {
         if(!chat) {
             return false;
         }
+        console.log(data);
         const groupId = chat.chat_id;
         const taskId = data.id;
         const taskName = data.title;
