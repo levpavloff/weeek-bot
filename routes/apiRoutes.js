@@ -85,6 +85,7 @@ router.get('/bot/get-tasks', async (req, res) => {
 
 router.post('/bot/create-task', async (req, res) => {
    const dataFromBody = req.body;
+   console.log(dataFromBody);
    const {project} = req.query;
    const task = await webAppController.prepareTask(dataFromBody, project);
    const createTask = await tasksService.createTask(task);
