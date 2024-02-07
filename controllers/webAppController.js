@@ -43,8 +43,6 @@ async function prepareTask(params, project) {
 }
 
 
-// kkkk
-//kk
 
 module.exports = {
     prepareTask,
