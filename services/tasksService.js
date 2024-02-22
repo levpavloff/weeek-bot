@@ -3,7 +3,7 @@ const weekToken = process.env.WEEK_TOKEN;
 
 const getTasks = async (projectId) => {
     try {
-        const response = await axios.get(`https://api.weeek.net/public/v1/tm/tasks?projectId=${projectId}&perPage=50`, {
+        const response = await axios.get(`https://api.weeek.net/public/v1/tm/tasks?projectId=${projectId}&perPage=100`, {
             headers: {
                 'Authorization': `Bearer ${weekToken}`
             }
