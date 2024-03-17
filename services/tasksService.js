@@ -8,6 +8,40 @@ const getTasks = async (projectId) => {
                 'Authorization': `Bearer ${weekToken}`
             }
         });
+        const boards = await axios.get(`https://api.weeek.net/public/v1/tm/boards?projectId=${projectId}`, {
+            headers: {
+                'Authorization': `Bearer ${weekToken}`
+            }
+        });
+        const boardsArr = boards.boards.map(board => board.id);
+        const columns = [];
+        for (const board of boardsArr) {
+            const column = await axios.get(`https://api.weeek.net/public/v1/tm/board-columns?boardId=${board}`, {
+                headers: {
+                    'Authorization': `Bearer ${weekToken}`
+                }
+            });
+            column.boardColumns.forEach(el=> {
+                columns.push(el);
+            })
+        }
+
+
+        // Функция для нахождения названия доски и колонки по id
+        function findNameById(id, array) {
+            const item = array.find(item => item.id === id);
+            return item ? item.name : null;
+        }
+
+        response.data.tasks.forEach(task => {
+            const boardName = findNameById(task.boardId, boards.boards);
+            const boardColumnName = findNameById(task.boardColumnId, columns);
+            if (boardName && boardColumnName) {
+                task.boardName = boardName;
+                task.boardColumnName = boardColumnName;
+            }
+        });
+
         return response.data.tasks; // Предполагаем, что API возвращает список проектов в response.data
     } catch (error) {
         console.error(error);

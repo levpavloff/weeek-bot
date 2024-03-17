@@ -217,7 +217,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
 };
 
 
-// Функция для отправке в группу уведомления о поставленной задаче
+// Функция для отправки в группу уведомления о поставленной задаче
 async function sendResMsg(project, data) {
     try{
         const chat = await Chat.findOne({'project.id': project});
