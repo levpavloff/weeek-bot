@@ -35,7 +35,7 @@ const getTasks = async (projectId) => {
         }
 
         response.data.tasks.forEach(task => {
-            const boardName = findNameById(task.boardId, boards.boards);
+            const boardName = findNameById(task.boardId, boards.data.boards);
             const boardColumnName = findNameById(task.boardColumnId, columns);
             if (boardName && boardColumnName) {
                 task.boardName = boardName;
