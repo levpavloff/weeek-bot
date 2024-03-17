@@ -13,8 +13,8 @@ const getTasks = async (projectId) => {
                 'Authorization': `Bearer ${weekToken}`
             }
         });
-        console.log(boards);
-        const boardsArr = boards.boards.map(board => board.id);
+        console.log(boards.data);
+        const boardsArr = boards.data.boards.map(board => board.id);
         const columns = [];
         for (const board of boardsArr) {
             const column = await axios.get(`https://api.weeek.net/public/v1/tm/board-columns?boardId=${board}`, {
@@ -22,7 +22,7 @@ const getTasks = async (projectId) => {
                     'Authorization': `Bearer ${weekToken}`
                 }
             });
-            column.boardColumns.forEach(el=> {
+            column.data.boardColumns.forEach(el=> {
                 columns.push(el);
             })
         }
