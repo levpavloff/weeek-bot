@@ -13,6 +13,7 @@ const getTasks = async (projectId) => {
                 'Authorization': `Bearer ${weekToken}`
             }
         });
+        console.log(boards);
         const boardsArr = boards.boards.map(board => board.id);
         const columns = [];
         for (const board of boardsArr) {
