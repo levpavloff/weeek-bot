@@ -73,7 +73,7 @@ router.get('/bot/get-tasks', async (req, res) => {
       acceptAccess.id = chatBD.project.id;
       acceptAccess.user = user;
       acceptAccess.chat = chat;
-      acceptAccess.tasks = await tasksService.getTasks(chatBD.project.id);
+      acceptAccess.data = await tasksService.getTasks(chatBD.project.id);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(acceptAccess);
    } catch (err) {
