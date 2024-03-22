@@ -41,8 +41,12 @@ const getTasks = async (projectId) => {
                 task.boardColumnName = boardColumnName;
             }
         });
+        const respObject = {};
+        respObject.boards = boards.data.boards;
+        respObject.columns = columns;
+        respObject.tasks = response.data.tasks
 
-        return response.data.tasks; // Предполагаем, что API возвращает список проектов в response.data
+        return respObject; // Предполагаем, что API возвращает список проектов в response.data
     } catch (error) {
         console.error(error);
         return []; // Возвращаем пустой массив в случае ошибки
