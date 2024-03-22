@@ -42,7 +42,7 @@ const acceptAccess = {
    chat: null,
    project: null,
    id: null,
-   tasks: []
+   data: null
 }
 
 // Здесь вы определяете маршруты API
