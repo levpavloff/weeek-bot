@@ -46,7 +46,7 @@ const acceptAccess = {
 }
 
 // Здесь вы определяете маршруты API
-router.get('/bot/get-tasks', async (req, res) => {
+router.get('/sandbot/get-tasks', async (req, res) => {
    const {user , chat} = req.query;
    if(!user || !chat) {
       console.log('Нет параметра');
@@ -83,7 +83,7 @@ router.get('/bot/get-tasks', async (req, res) => {
 });
 
 
-router.post('/bot/create-task', async (req, res) => {
+router.post('/sandbot/create-task', async (req, res) => {
    const dataFromBody = req.body;
    console.log(dataFromBody);
    const {project} = req.query;
