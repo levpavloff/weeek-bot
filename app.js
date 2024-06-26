@@ -29,7 +29,7 @@ connectDB()
         app.use(apiRoutes);
 
         // Монтируем маршрут для обработки вебхук-запросов от Telegram
-        app.post('/bot/telegram-webhook', (req, res) => {
+        app.post('/sandbot/telegram-webhook', (req, res) => {
             const update = req.body;
             bot.handleUpdate(update, res);
         });
@@ -86,7 +86,7 @@ connectDB()
             console.log(`Server is running on port ${port}`);
 
             // Устанавливаем вебхук для бота
-            bot.telegram.setWebhook(`https://s1.hmns.in/bot/telegram-webhook`);
+            bot.telegram.setWebhook(`https://s1.hmns.in/sandbot/telegram-webhook`);
 
 
             console.log(`Webhook has been set up.`);
