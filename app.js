@@ -10,7 +10,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-const port = process.env.PORT || 2519;
+const port = process.env.PORT || 2520;
 
 
 // Используем bodyParser для обработки JSON-запросов
