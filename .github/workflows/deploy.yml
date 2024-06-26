@@ -20,6 +20,6 @@ jobs:
             git config --global --add safe.directory /var/www/projects/sandbot &&
             cd /var/www/projects/sandbot &&
             git checkout . &&
-            git pull origin main &&
+            git pull origin dev &&
             pm2 restart all
           '
