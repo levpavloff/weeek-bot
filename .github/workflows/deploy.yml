@@ -1,9 +1,9 @@
-name: Bot Weeek
+name: Bot Week
 
 on:
   push:
     branches:
-      - main # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
+      - dev # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
 
 jobs:
   deploy:
@@ -16,4 +16,10 @@ jobs:
 
       - name: Execute deployment commands
         run: |
-          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 'cd /var/www/projects/bot && git checkout . && git pull origin main && pm2 restart all'
+          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 '
+            git config --global --add safe.directory /var/www/projects/sandbot &&
+            cd /var/www/projects/sandbot &&
+            git checkout . &&
+            git pull origin main &&
+            pm2 restart all
+          '
