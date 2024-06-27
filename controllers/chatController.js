@@ -202,7 +202,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
                 inline_keyboard: [[
                     {
                         text: 'Поставить задачу ✅',
-                        url: `https://t.me/humans_projectbot/humans_projects?startapp=${encodedData}`
+                        url: `https://t.me/hmns_sandbot/humans_sandboxapp?startapp=${encodedData}`
                     }
                 ]]
             },  parse_mode: 'HTML'
