@@ -36,7 +36,7 @@ async function sendQuestion(project ,prompt) {
 4. Пример корректного ответа:
    - Запрос:
      
-     HUMANS: Создай созвон на Завтра в 11 утра. Тема: Обсуждаем правки по дизайну. Участники: @levpavloff, @Anna_Babay. Комментарий: Будем обсуждать финальные правки и должны прийти к четким срокам верстки.
+     HUMANS: Создай созвон на Завтра в 11 утра (часовой пояс явно не указан, добавляем MSK). Тема: Обсуждаем правки по дизайну. Участники: @levpavloff, @Anna_Babay. Комментарий: Будем обсуждать финальные правки и должны прийти к четким срокам верстки.
      
    - Ответ:
      
@@ -44,7 +44,7 @@ async function sendQuestion(project ,prompt) {
        "success": true,
        "data": {
          "project": "HUMANS",
-         "date": "Tomorrow at 11 am",
+         "date": "Tomorrow at 11 am MSK",
          "description": "Обсуждаем правки по дизайну",
          "participants": ["@levpavloff", "@Anna_Babay"],
          "comment": "Будем обсуждать финальные правки и должны прийти к четким срокам верстки."
