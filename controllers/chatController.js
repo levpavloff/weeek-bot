@@ -187,13 +187,23 @@ const updateChatProject = async (ctx, projectId, projectName) => {
             parse_mode: 'HTML'
         });
 
+        // Закрепляем сообщение
         await ctx.api.pinChatMessage(groupChatId, startMessage.message_id);
+
+        // Отправляем дополнительное сообщение в формате Markdown
+        const additionalMessage = await ctx.api.sendMessage(groupChatId, `**А в этом сообщении мы будем собирать всё самое важное в чате**\n\n Мы сделали эту функцию, чтобы не засорять закрепленные сообщения. Вместо я буду закреплять нужные вам сообщения в этом главном посте. Чтобы использовать эту возможность, просто ответьте на нужное сообщение командой /pin. Я добавлю ссылку на сообщение в этот пост и кратко опишу о чем закрепленное сообщение. \n\n Также я закреплю здесь несколько важных статей из нашей базы знаний для более эффективной работы. Обязательно почитайте:\n\n 1)Тест 1\n 2)Тест 2\n 3)Тест 3`, {
+            parse_mode: 'Markdown'
+        });
+
+        // Сохранение ID дополнительного сообщения в базу данных
+        chat.main_message = additionalMessage.message_id;
+        await chat.save();
 
     } catch (error) {
         console.error(error);
         console.log('Произошла ошибка при обновлении проекта.');
     }
-}
+};
 
 // Функция для отправки в группу уведомления о поставленной задаче
 async function sendResMsg(project, data) {

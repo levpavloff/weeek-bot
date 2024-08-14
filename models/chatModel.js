@@ -11,7 +11,9 @@ const ChatSchema = new mongoose.Schema({
             name: String,
         }],
     },
-    users: [String]
+    users: [String],
+    main_message: { type: Number, default: 0 },
+    events: [{title: String, date: Date, zoom_link: String, zoom_id: String, subscribers: String, description: String}],
 });
 
 module.exports = mongoose.model('Chat', ChatSchema);
