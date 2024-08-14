@@ -191,37 +191,24 @@ const updateChatProject = async (ctx, projectId, projectName) => {
         await ctx.api.pinChatMessage(groupChatId, startMessage.message_id);
 
         // Отправляем дополнительное сообщение в формате Markdown
-        const additionalMessage = await ctx.api.sendMessage(groupChatId, `<b>В этом сообщении мы будем собирать всё самое важное.</b>
-
-<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду.<br> 
-Чтобы закрепить важное сообщение, просто ответьте на него командой /pin. Я добавлю ссылку на это сообщение сюда и кратко опишу его содержание.</blockquote>
-
-<b>Закрепленные сообщения:</b>
-
-<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:
-`, {
-            parse_mode: 'HTML',
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: 'Перейти на сайт',
-                            url: 'https://example.com'
-                        },
-                        {
-                            text: 'Второй сайт',
-                            url: 'https://another-example.com'
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Третий сайт',
-                            url: 'https://third-example.com'
-                        }
+        const additionalMessage = await ctx.api.sendMessage(groupChatId, '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
+            '<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду. \n' +
+            'Чтобы закрепить важное сообщение, просто ответьте на него командой /pin. Я добавлю ссылку на это сообщение сюда и кратко опишу его содержание.</blockquote>\n\n' +
+            '<b>Закрепленные сообщения:</b>\n\n' +
+            '<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:',
+            {
+                parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: 'Открыть базу знаний',
+                                url: 'https://example.com/knowledge-base'
+                            }
+                        ]
                     ]
-                ]
-            }
-        });
+                }
+            });
 
         // Сохранение ID дополнительного сообщения в базу данных
         let mainChat= await Chat.findOne({ 'project.id': projectId });
