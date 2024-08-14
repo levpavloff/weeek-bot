@@ -25,9 +25,9 @@ connectDB()
         app.use(apiRoutes);
 
         // Монтируем маршрут для обработки вебхук-запросов от Telegram
-        app.post('/sandbot/telegram-webhook', webhookCallback(bot, 'express'));
+        app.post('/telegram-webhook', webhookCallback(bot, 'express'));
 
-        app.get('/sandbot/test', (req, res) => {
+        app.get('/test', (req, res) => {
             res.send('Test');
         })
 
