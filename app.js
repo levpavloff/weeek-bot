@@ -89,6 +89,36 @@ connectDB()
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
         });
 
+        // Обработчик команды /pin
+        bot.command('pin', async (ctx) => {
+            // Проверяем, является ли это сообщение ответом на другое сообщение
+            if (ctx.message.reply_to_message) {
+                const repliedMessage = ctx.message.reply_to_message;
+
+                // Получаем текст сообщения или данные других типов
+                const messageText = repliedMessage.text || '<Медиа или пустое сообщение>';
+
+                // Получаем информацию об авторе сообщения
+                const authorFirstName = repliedMessage.from.first_name;
+                const authorLastName = repliedMessage.from.last_name || '';
+                const authorUsername = repliedMessage.from.username ? `@${repliedMessage.from.username}` : '';
+
+                const authorFullName = `${authorFirstName} ${authorLastName}`.trim();
+
+                // Ссылка на сообщение
+                const chatId = repliedMessage.chat.id;
+                const messageId = repliedMessage.message_id;
+                const messageLink = `https://t.me/c/${String(chatId).slice(4)}/${messageId}`;
+
+                // Выводим в консоль текст сообщения, ссылку и имя автора
+                console.log(`Сообщение: ${messageText}`);
+                console.log(`Автор: ${authorFullName} ${authorUsername}`);
+                console.log(`Ссылка на сообщение: ${messageLink}`);
+            } else {
+                ctx.reply('Пожалуйста, используйте команду /pin в ответ на сообщение, которое вы хотите закрепить.');
+            }
+        });
+
         // Запуск сервера
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
