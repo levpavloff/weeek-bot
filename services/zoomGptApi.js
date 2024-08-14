@@ -51,7 +51,7 @@ async function sendQuestion(project ,prompt) {
        }
      }
   `;
-
+    console.log(project);
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini", // Или замените на идентификатор вашей модели, если используете настроенную модель
