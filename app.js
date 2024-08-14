@@ -27,6 +27,10 @@ connectDB()
         // Монтируем маршрут для обработки вебхук-запросов от Telegram
         app.post('/sandbot/telegram-webhook', webhookCallback(bot, 'express'));
 
+        app.get('/test', (req, res) => {
+            res.send('Test');
+        })
+
         // Обработка команды /start (пример)
         bot.command('start', (ctx) => {
             ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS');
