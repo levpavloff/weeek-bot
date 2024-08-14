@@ -66,7 +66,7 @@ connectDB()
         // Обработчик регистрации Zoom конференций
         bot.command('zoom', async (ctx) => {
             // Извлекаем текст после команды /zoom
-            const messageText = ctx.message.text.replace('/zoom', '').trim();
+            const messageText = ctx.message.text.replace('/zoom@hmns_sandbot', '').trim();
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
         });
 
