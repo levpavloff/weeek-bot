@@ -63,6 +63,13 @@ connectDB()
             ctx.editMessageText(`Проект ${projectName} (${projectId}) успешно выбран.`);
         });
 
+        // Обработчик регистрации Zoom конференций
+        bot.command('zoom', async (ctx) => {
+            // Извлекаем текст после команды /zoom
+            const messageText = ctx.message.text.replace('/zoom', '').trim();
+            console.log(messageText); // Выводим в консоль текст после команды /zoom
+        });
+
         // Запуск сервера
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
