@@ -7,6 +7,7 @@ const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
 const { sendQuestion } = require('./services/zoomGptApi');
+const {summaryMessage} = require('./services/gptSummaryPin');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 
@@ -104,6 +105,7 @@ connectDB()
                 const authorUsername = repliedMessage.from.username ? `@${repliedMessage.from.username}` : '';
 
                 const authorFullName = `${authorFirstName} ${authorLastName}`.trim();
+                const parsedMessage = await summaryMessage(`${authorFullName} написал: ${messageText}`);
 
                 // Ссылка на сообщение
                 const chatId = repliedMessage.chat.id;
@@ -112,6 +114,7 @@ connectDB()
 
                 // Выводим в консоль текст сообщения, ссылку и имя автора
                 console.log(`Сообщение: ${messageText}`);
+                console.log(`Cаммари: ${parsedMessage}`);
                 console.log(`Автор: ${authorFullName} ${authorUsername}`);
                 console.log(`Ссылка на сообщение: ${messageLink}`);
             } else {
