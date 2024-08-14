@@ -67,7 +67,7 @@ connectDB()
         bot.command('zoom', async (ctx) => {
             // Извлекаем текст после команды /zoom
             const messageText = ctx.message.text.replace('/zoom', '').trim();
-            console.log(messageText); // Выводим в консоль текст после команды /zoom
+            console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
         });
 
         // Запуск сервера
