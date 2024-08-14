@@ -75,7 +75,7 @@ connectDB()
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
             const groupId = ctx.message.chat.id;
             const projectName = await chatController.getProjectName(groupId);
-            const response = await sendQuestion(messageText);
+            const response = await sendQuestion(projectName,messageText);
             await ctx.reply(response, {
                 parse_mode: 'Markdown'
             });
