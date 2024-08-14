@@ -8,6 +8,7 @@ const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
 const { sendQuestion } = require('./services/zoomGptApi');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
+const chrono = require('chrono-node');
 
 const app = express();
 app.use(cors());
@@ -76,7 +77,10 @@ connectDB()
             const groupId = ctx.message.chat.id;
             const projectName = await chatController.getProjectName(groupId);
             const response = await sendQuestion(projectName,messageText);
-            await ctx.reply(response, {
+            const obj = JSON.parse(response);
+            obj.data.date = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
+
+            await ctx.reply(JSON.stringify(obj), {
                 parse_mode: 'Markdown'
             });
 

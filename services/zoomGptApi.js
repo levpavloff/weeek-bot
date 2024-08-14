@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 async function sendQuestion(project ,prompt) {
     const extendedInstructions = `
-    Задача: Анализировать запрос и возвращать JSON-ответ.
+    Задача: Анализировать запрос и возвращать JSON-ответ (СТРОГО БЕЗ ОБЕРТКИ В АПОСТРОФЫ MARKDOWN).
 Правила обработки запроса:
 
 1. Обязательные параметры:
