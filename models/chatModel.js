@@ -13,6 +13,7 @@ const ChatSchema = new mongoose.Schema({
     },
     users: [String],
     main_message: { type: Number, default: 0 },
+    pinned_message: [{link: Number, message: String, author: String, date: Date, agenda: String}],
     events: [{title: String, date: Date, zoom_link: String, zoom_id: String, subscribers: String, description: String}],
 });
 
