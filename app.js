@@ -6,8 +6,8 @@ const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
-//const { sendQuestion } = require('./services/zoomGptApi');
-const {sendYaGPT} = require('./services/yaGPTzoom');
+const { sendQuestion } = require('./services/zoomGptApi');
+//const {sendYaGPT} = require('./services/yaGPTzoom');
 
 const app = express();
 app.use(cors());
@@ -69,7 +69,7 @@ connectDB()
         bot.command('zoom', async (ctx) => {
             // Извлекаем текст после команды /zoom
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
-            const response = await sendYaGPT(messageText);
+            const response = await sendQuestion(messageText);
             await ctx.reply(response);
             console.log(response);
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
@@ -80,7 +80,7 @@ connectDB()
             console.log(`Server is running on port ${port}`);
 
             // Устанавливаем вебхук для бота
-            bot.api.setWebhook(`https://s1.hmns.in/sandbot/telegram-webhook`);
+            bot.api.setWebhook(`https://server.hmn.su/sandbot/telegram-webhook`);
 
             console.log(`Webhook has been set up.`);
         });

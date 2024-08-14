@@ -1,26 +1,29 @@
-name: Bot Week
+name: HMNS project bot
 
 on:
   push:
     branches:
-      - dev # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
+      - dev  # Указывает на ветку, изменения в которой будут инициировать процесс деплоя
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.1
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.EUR_SECRET }}
 
       - name: Execute deployment commands
         run: |
-          ssh -o StrictHostKeyChecking=no levpavloff@185.185.70.149 '
+          ssh -o StrictHostKeyChecking=no levpavloff@${{ secrets.EUR_VDS }} "
             git config --global --add safe.directory /var/www/projects/sandbot &&
             cd /var/www/projects/sandbot &&
             git checkout . &&
             git pull origin dev &&
             npm install &&
-            pm2 restart all
-          '
+            pm2 restart sandbot
+          "
