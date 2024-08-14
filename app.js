@@ -6,7 +6,8 @@ const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
-const {sendQuestion} = require('./services/zoomGptApi');
+const { sendQuestion } = require('./services/zoomGptApi');
+const {sendYaGPT} = require('./services/yaGPTzoom');
 
 const app = express();
 app.use(cors());
@@ -68,7 +69,7 @@ connectDB()
         bot.command('zoom', async (ctx) => {
             // Извлекаем текст после команды /zoom
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
-            const response = await sendQuestion(messageText);
+            const response = await sendYaGPT(messageText);
             await ctx.reply(response);
             console.log(response);
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
