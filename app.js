@@ -1,48 +1,35 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Telegraf } = require('telegraf');
+const { Bot, webhookCallback } = require('grammy');
 const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
 
-
 const app = express();
 app.use(cors());
 const port = process.env.PORT || 2520;
 
-
 // Используем bodyParser для обработки JSON-запросов
-
 app.use(bodyParser.json());
-
-
-// const adminTelegramId = process.env.ADMIN;
 
 // Подключение к базе данных
 connectDB()
     .then(() => {
         console.log('Connected to MongoDB');
         // Создаем экземпляр бота после успешного подключения к базе данных
-        const bot = new Telegraf(process.env.BOT_TOKEN);
+        const bot = new Bot(process.env.BOT_TOKEN);
         app.use(apiRoutes);
 
         // Монтируем маршрут для обработки вебхук-запросов от Telegram
-        app.post('/sandbot/telegram-webhook', (req, res) => {
-            const update = req.body;
-            bot.handleUpdate(update, res);
-        });
-
-
+        app.post('/sandbot/telegram-webhook', webhookCallback(bot, 'express'));
 
         // Обработка команды /start (пример)
         bot.command('start', (ctx) => {
-            // Получаем payload из аргумента команды /start
-            ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS')
+            ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS');
 
-
-            /*const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
+            /* const payload = ctx.message.text.split(' ')[1]; // Предполагая, что /start передан с аргументом
 
             if (payload) {
                 const decodedData = Buffer.from(payload, 'base64').toString('utf8');
@@ -50,28 +37,24 @@ connectDB()
                 console.log(JSON.parse(decodedData)); // Теперь вы можете использовать расшифрованные данные
             } else {
                 ctx.reply('Привет! Этот бот для внутреннего пользования команды HUMANS')
-            }*/
+            } */
         });
-
 
         // Обработчик команды /addchat для добавления чата
         bot.command('addchat', async (ctx) => {
             if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
-            if (await chatController.checkAdmin(ctx)) {
-                await chatController.addChat(ctx);
+                if (await chatController.checkAdmin(ctx)) {
+                    await chatController.addChat(ctx);
+                } else {
+                    ctx.reply('Вы не являетесь администратором.');
+                }
             } else {
-                // Если пользователь не администратор, можно отправить сообщение или выполнить другие действия.
-                ctx.reply('Вы не являетесь администратором.');
-            }
-            } else {
-                // Опционально: сообщение пользователю, если команда вызвана не в групповом чате
                 await ctx.reply('Эта команда доступна только в групповых чатах.');
             }
         });
 
-
         // Обработчик колбэков для выбора проекта
-        bot.action(/^project_(.*):(.*)$/, (ctx) => {
+        bot.callbackQuery(/^project_(.*):(.*)$/, (ctx) => {
             const projectId = ctx.match[1];
             const projectName = ctx.match[2];
 
@@ -80,14 +63,12 @@ connectDB()
             ctx.editMessageText(`Проект ${projectName} (${projectId}) успешно выбран.`);
         });
 
-
         // Запуск сервера
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
 
             // Устанавливаем вебхук для бота
-            bot.telegram.setWebhook(`https://s1.hmns.in/sandbot/telegram-webhook`);
-
+            bot.api.setWebhook(`https://s1.hmns.in/sandbot/telegram-webhook`);
 
             console.log(`Webhook has been set up.`);
         });
@@ -95,5 +76,3 @@ connectDB()
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
     });
-
-
