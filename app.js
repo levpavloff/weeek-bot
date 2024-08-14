@@ -78,7 +78,8 @@ connectDB()
             const projectName = await chatController.getProjectName(groupId);
             const response = await sendQuestion(projectName,messageText);
             const obj = JSON.parse(response);
-            obj.data.date = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
+            const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
+            obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
 
             await ctx.reply(JSON.stringify(obj), {
                 parse_mode: 'Markdown'
