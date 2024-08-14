@@ -6,14 +6,14 @@ const openai = new OpenAI({
 
 
 
-async function sendQuestion(prompt) {
+async function sendQuestion(project ,prompt) {
     const extendedInstructions = `
     Задача: Анализировать запрос и возвращать JSON-ответ.
 Правила обработки запроса:
 
 1. Обязательные параметры:
    - Название проекта. Всегда стоит в начале запроса (типа HUMANS: или IMAGO: или ОРТОПЕДЫ:)
-   - Дата и время встречи с указанием часового пояса. Могут написать "Завтра в 11 утра мск" - тогда тебе нужно понять сегодняшнюю дату и посчитать "завтра"
+   - Дата и время в разных форматах. Тебе нужно просто вытащить ее из общего текста и положить в JSON. Даже если это "Завтра в 11 утра" или 24 июня в 21 вечера - пиши прямо так в 
 
 2. Дополнительные параметры:
    - Описание встречи.
@@ -36,7 +36,7 @@ async function sendQuestion(prompt) {
 4. Пример корректного ответа:
    - Запрос:
      
-     HUMANS: Создай созвон на 23 июля 2024 в 12:00 мск. Тема: Обсуждаем правки по дизайну. Участники: @levpavloff, @Anna_Babay. Комментарий: Будем обсуждать финальные правки и должны прийти к четким срокам верстки.
+     HUMANS: Создай созвон на Завтра в 11 утра. Тема: Обсуждаем правки по дизайну. Участники: @levpavloff, @Anna_Babay. Комментарий: Будем обсуждать финальные правки и должны прийти к четким срокам верстки.
      
    - Ответ:
      
@@ -44,7 +44,7 @@ async function sendQuestion(prompt) {
        "success": true,
        "data": {
          "project": "HUMANS",
-         "date": "2024-07-23T12:00:00.000Z",
+         "date": "Завтра в 11 утра",
          "description": "Обсуждаем правки по дизайну",
          "participants": ["@levpavloff", "@Anna_Babay"],
          "comment": "Будем обсуждать финальные правки и должны прийти к четким срокам верстки."
@@ -55,7 +55,7 @@ async function sendQuestion(prompt) {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini", // Или замените на идентификатор вашей модели, если используете настроенную модель
-            messages: [{ role: "system", content: extendedInstructions }, { role: "user", content: "HUMANS: " + prompt }],
+            messages: [{ role: "system", content: extendedInstructions }, { role: "user", content: `Проект ${project}:` + prompt }],
             max_tokens: 500,
             n: 1,
             stop: null,

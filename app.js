@@ -73,10 +73,13 @@ connectDB()
         bot.command('zoom', async (ctx) => {
             // Извлекаем текст после команды /zoom
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
+            const groupId = ctx.message.chat.id;
+            const projectName = await chatController.getProjectName(groupId);
             const response = await sendQuestion(messageText);
             await ctx.reply(response, {
                 parse_mode: 'Markdown'
             });
+
             console.log(response);
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
         });

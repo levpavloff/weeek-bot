@@ -227,6 +227,21 @@ async function sendMessageToTelegram(chatId, text) {
     }
 }
 
+// Запрос сессии по ID телеграм-юзера
+async function getProjectName(groupId) {
+    try {
+        const project = await Chat.findOne({ chat_id: groupId });
+        if (project) {
+            return project.project.name;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске chat_id по update_id:', error);
+        return null;
+    }
+}
+
 module.exports = {
     addChat,
     updateChatProject,
@@ -234,4 +249,5 @@ module.exports = {
     getDetails,
     checkAccess,
     sendResMsg,
+    getProjectName
 };
