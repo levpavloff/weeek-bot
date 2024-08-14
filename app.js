@@ -74,7 +74,9 @@ connectDB()
             // Извлекаем текст после команды /zoom
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
             const response = await sendQuestion(messageText);
-            await ctx.reply(response);
+            await ctx.reply(response, {
+                parse_mode: 'Markdown'
+            });
             console.log(response);
             console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
         });
