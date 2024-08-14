@@ -14,7 +14,7 @@ async function summaryMessage(prompt) {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini", // Или замените на идентификатор вашей модели, если используете настроенную модель
-            messages: [{ role: "system", content: extendedInstructions }, { role: "user", content: `Проект ${project}:` + prompt }],
+            messages: [{ role: "system", content: extendedInstructions }, { role: "user", content: prompt }],
             max_tokens: 200,
             n: 1,
             stop: null,
