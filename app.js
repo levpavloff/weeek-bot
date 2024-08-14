@@ -6,7 +6,7 @@ const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
-const sendQuestion = require('./services/zoomGptApi');
+const {sendQuestion} = require('./services/zoomGptApi');
 
 const app = express();
 app.use(cors());

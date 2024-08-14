@@ -1,6 +1,5 @@
 const OpenAI = require("openai");
 require('dotenv').config();
-
 const openai = new OpenAI({
     apiKey: process.env.GPTAPI, // Замените на ваш реальный API ключ
 });
