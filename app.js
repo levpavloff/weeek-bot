@@ -137,31 +137,29 @@ connectDB()
             }
         });
 
-        // Обработка команды /managepin
         bot.command('managepin', async (ctx) => {
-            const chat = await Chat.findOne({ "chat_id": ctx.message.chat.id });
+            const chatId = ctx.chat.id;
+            const chat = await Chat.findOne({ chat_id: chatId });
 
-
-            if (!chat) {
-                return ctx.reply('Не могу найти группу');
-            } else{
-                if (chat.pinned_messages.length === 0) {
-                    return ctx.reply('В группе нет закрепленных сообщений');
-                }
+            if (!chat || chat.pinned_messages.length === 0) {
+                return ctx.reply('Нет сохраненных сообщений.');
             }
 
             const keyboard = new InlineKeyboard();
             chat.pinned_messages.forEach((msg) => {
-                keyboard.text(msg.summary, `pinselect_${msg._id}`).row();
+                keyboard.text(msg.summary, `pinselect_${msg.id}`).row();
             });
 
             await ctx.reply('Выберите сообщение:', { reply_markup: keyboard });
         });
 
-        bot.callbackQuery(/pinselect_(.*)/, async (ctx) => {
-            const messageId = ctx.match[1];
-            console.log(messageId);
-            const selectedMessage = await Chat.findById(messageId);
+// Обработка выбора сообщения
+        bot.callbackQuery(/pinselect_(\d+)/, async (ctx) => {
+            const chatId = ctx.chat.id;
+            const messageId = parseInt(ctx.match[1], 10);
+
+            const chat = await Chat.findOne({ chat_id: chatId });
+            const selectedMessage = chat.pinned_messages.find((msg) => msg.id === messageId);
 
             if (!selectedMessage) {
                 return ctx.answerCallbackQuery('Сообщение не найдено.');
@@ -177,47 +175,53 @@ connectDB()
             await ctx.editMessageText(`Вы выбрали сообщение: ${selectedMessage.summary}\n\nВыберите действие:`, { reply_markup: keyboard });
         });
 
-        // Обработка нажатия кнопки "Назад"
+// Обработка нажатия кнопки "Назад"
         bot.callbackQuery('pinback', async (ctx) => {
-            const chat = await Chat.find({ "chat_id": ctx.chat.id });
+            const chatId = ctx.chat.id;
+            const chat = await Chat.findOne({ chat_id: chatId });
 
-            if (!chat) {
-                return ctx.reply('Не могу найти группу');
-            } else{
-                if (chat.pinned_messages.length === 0) {
-                    return ctx.reply('В группе нет закрепленных сообщений');
-                }
+            if (!chat || chat.pinned_messages.length === 0) {
+                return ctx.editMessageText('Нет сохраненных сообщений.');
             }
-            const messages = chat.pinned_messages;
 
             const keyboard = new InlineKeyboard();
-            messages.forEach((msg) => {
-                keyboard.text(msg.summary, `select_${msg._id}`).row();
+            chat.pinned_messages.forEach((msg) => {
+                keyboard.text(msg.summary, `pinselect_${msg.id}`).row();
             });
 
             await ctx.editMessageText('Выберите сообщение:', { reply_markup: keyboard });
         });
 
-        // Обработка изменения описания
-        bot.callbackQuery(/pinedit_(.*)/, async (ctx) => {
-            const messageId = ctx.match[1];
+// Обработка изменения описания
+        bot.callbackQuery(/pinedit_(\d+)/, async (ctx) => {
+            const chatId = ctx.chat.id;
+            const messageId = parseInt(ctx.match[1], 10);
+
             await ctx.editMessageText('Введите новое описание:');
 
-            // Ожидание ввода нового описания
             bot.on('message', async (ctx) => {
                 const newSummary = ctx.message.text;
-                await Chat.findByIdAndUpdate(messageId, { summary: newSummary });
+                await Chat.updateOne(
+                    { chat_id: chatId, 'pinned_messages.id': messageId },
+                    { $set: { 'pinned_messages.$.summary': newSummary } }
+                );
                 await ctx.reply('Описание успешно обновлено!');
             });
         });
 
-        // Обработка удаления сообщения
-        bot.callbackQuery(/pindelete_(.*)/, async (ctx) => {
-            const messageId = ctx.match[1];
+// Обработка удаления сообщения
+        bot.callbackQuery(/pindelete_(\d+)/, async (ctx) => {
+            const chatId = ctx.chat.id;
+            const messageId = parseInt(ctx.match[1], 10);
+
             await ctx.answerCallbackQuery('Вы уверены, что хотите удалить сообщение?', { show_alert: true });
 
-            // Удаление сообщения из базы
-            await Chat.findByIdAndDelete(messageId);
+            // Удаление сообщения из массива
+            await Chat.updateOne(
+                { chat_id: chatId },
+                { $pull: { pinned_messages: { id: messageId } } }
+            );
+
             await ctx.editMessageText('Сообщение успешно удалено.');
         });
 
