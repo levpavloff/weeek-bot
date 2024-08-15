@@ -100,7 +100,7 @@ connectDB()
 
 
                 const params = {
-                    c: repliedMessage.message_id,
+                    id: repliedMessage.message_id,
                     link: `https://t.me/c/${String(repliedMessage.chat.id).slice(4)}/${repliedMessage.message_id}`,
                     message: messageText,
                     author: repliedMessage.from.first_name,
