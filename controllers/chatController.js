@@ -283,7 +283,7 @@ async function saveToPined(params, groupId) {
 
         if (project) {
             console.log(project.pinned_messages);
-            console.log(params.id);
+            console.log(params);
             if(project.pinned_messages.some(message => message.id === params.id)) {
                 return false
             }
