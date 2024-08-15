@@ -119,6 +119,17 @@ connectDB()
             }
         });
 
+        bot.command('log', async (ctx) => {
+            // Проверяем, является ли это сообщение ответом на другое сообщение
+            if (ctx.message.reply_to_message) {
+
+                console.log(ctx.message)
+
+            } else {
+                ctx.reply('Пожалуйста, используйте команду /log в ответ на сообщение, которое вы хотите проверить.');
+            }
+        });
+
         // Запуск сервера
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
