@@ -338,20 +338,23 @@ connectDB()
 
 
         // Отслеживаем событие закрепления сообщения
-        bot.on('message:pinned_message', async (ctx) => {
-            const chatId = ctx.chat.id;
-            const pinnedMessage = ctx.message.pinned_message;
+        bot.on('message', async (ctx) => {
+            // Проверяем, содержит ли сообщение новый закреп
+            if (ctx.message.pinned_message) {
+                const chatId = ctx.chat.id;
+                const pinnedMessage = ctx.message.pinned_message;
 
-            // Проверяем, кто закрепил сообщение
-            const userWhoPinned = ctx.from;
+                // Проверяем, кто закрепил сообщение
+                const userWhoPinned = ctx.from;
 
-            // Если закрепил не бот, то снимаем закреп и отправляем уведомление
-            if (userWhoPinned.id !== (await bot.api.getMe()).id) {
-                // Снимаем закреп
-                await ctx.unpinChatMessage(pinnedMessage.message_id);
+                // Проверяем, что это не бот закрепил сообщение
+                if (userWhoPinned.id !== (await bot.api.getMe()).id) {
+                    // Снимаем закреп
+                    await ctx.unpinChatMessage(pinnedMessage.message_id);
 
-                // Отправляем уведомление пользователю
-                await ctx.reply("Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в навигационном посте.");
+                    // Отправляем уведомление пользователю
+                    await ctx.reply("Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в навигационном посте.");
+                }
             }
         });
 
