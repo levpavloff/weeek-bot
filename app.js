@@ -152,6 +152,10 @@ connectDB()
 
             await ctx.reply('Выберите сообщение:', { reply_markup: keyboard });
         });
+        bot.command('updatepin', async (ctx) => {
+            const chatId = ctx.chat.id;
+            await chatController.addPinnedMessage(ctx,chatId);
+        });
 
 // Обработка выбора сообщения
         bot.callbackQuery(/pinselect_(\d+)/, async (ctx) => {
@@ -205,6 +209,7 @@ connectDB()
                     { chat_id: chatId, 'pinned_messages.id': messageId },
                     { $set: { 'pinned_messages.$.summary': newSummary } }
                 );
+                await chatController.addPinnedMessage(ctx,chatId);
                 await ctx.reply('Описание успешно обновлено!');
             });
         });
