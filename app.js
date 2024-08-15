@@ -111,11 +111,13 @@ connectDB()
                     username: repliedMessage.from.username
                 };
                 const saveToPin= await chatController.saveToPined(params, repliedMessage.chat.id);
+                const chat = await Chat.findOne({chat_id:repliedMessage.chat.id});
                 if(!saveToPin) {
-                    ctx.reply('Это сообщение уже добавлено в закреп ранее');
+                    await ctx.reply('Это сообщение уже добавлено в закреп ранее');
                 } else {
                     await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
-                    ctx.reply(`Сообщение <a href="${params.link}">закреплено</a>`, {parse_mode: 'HTML'});
+                    const newLink = params.link.replace(params.id.toString(), chat.main_message.toString())
+                    await ctx.reply(`Сообщение <a href="${newLink}">закреплено</a>`, {parse_mode: 'HTML'});
                 }
 
 
