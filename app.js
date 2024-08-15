@@ -219,7 +219,10 @@ connectDB()
             const chatId = ctx.chat.id;
             const messageId = parseInt(ctx.match[1], 10);
 
-            await ctx.answerCallbackQuery('Вы уверены, что хотите удалить сообщение?', { show_alert: true });
+            await ctx.answerCallbackQuery({
+                text: 'Вы уверены, что хотите удалить сообщение?',
+                show_alert: true,
+            });
 
             // Удаление сообщения из массива
             await Chat.updateOne(
