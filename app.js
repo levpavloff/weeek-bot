@@ -11,6 +11,7 @@ const {summaryMessage} = require('./services/gptSummaryPin');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 
+
 const app = express();
 app.use(cors());
 const port = process.env.PORT || 2520;
@@ -128,6 +129,7 @@ connectDB()
                 ctx.reply('Пожалуйста, используйте команду /log в ответ на сообщение, которое вы хотите проверить.');
             }
         });
+        bot.reaction("🎉", (ctx) => console.log('Reaction!'));
 
         // Запуск сервера
         app.listen(port, () => {
@@ -143,7 +145,7 @@ connectDB()
             console.log(`Webhook has been set up.`);
         });
 
-        bot.reaction("🎉", (ctx) => ctx.reply("whoop whoop"));
+
 
     })
     .catch((error) => {
