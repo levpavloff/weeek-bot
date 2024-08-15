@@ -203,15 +203,21 @@ connectDB()
 
             await ctx.editMessageText('Введите новое описание:');
 
-            bot.on('message', async (ctx) => {
+            // Используем `once`, чтобы бот ожидал только одно следующее сообщение
+            const onMessageHandler = async (ctx) => {
                 const newSummary = ctx.message.text;
+
+                // Обновляем описание в базе данных
                 await Chat.updateOne(
                     { chat_id: chatId, 'pinned_messages.id': messageId },
                     { $set: { 'pinned_messages.$.summary': newSummary } }
                 );
-                await chatController.addPinnedMessage(ctx,chatId);
+
                 await ctx.reply('Описание успешно обновлено!');
-            });
+            };
+
+            // Ожидаем одно сообщение от пользователя
+            bot.once('message', onMessageHandler);
         });
 
         bot.callbackQuery(/pindelete_(\d+)/, async (ctx) => {
