@@ -109,7 +109,7 @@ connectDB()
                     username: repliedMessage.from.username
                 };
                 await chatController.saveToPined(params, repliedMessage.chat.id);
-                await chatController.addPinnedMessage(repliedMessage.chat.id);
+                await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
 
 
 
