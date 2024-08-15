@@ -339,6 +339,7 @@ connectDB()
 
         // Отслеживаем событие закрепления сообщения
         bot.on('message', async (ctx) => {
+            console.log(ctx)
             // Проверяем, содержит ли сообщение новый закреп
             if (ctx.message.pinned_message) {
                 const chatId = ctx.chat.id;
