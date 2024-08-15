@@ -270,8 +270,9 @@ async function getProjectName(groupId) {
 async function saveToPined(params, groupId) {
     try {
         const project = await Chat.findOne({ chat_id: groupId });
+        console.log(project);
         if (project) {
-           project.pinned_message.push(params);
+           project.pinned_messages.push(params);
            await project.save();
             return true;
         }
