@@ -108,7 +108,10 @@ connectDB()
                     summary: parsedMessage,
                     username: repliedMessage.from.username
                 };
-                await chatController.saveToPined(params, repliedMessage.chat.id);
+                const saveToPin= await chatController.saveToPined(params, repliedMessage.chat.id);
+                if(!saveToPin) {
+                    ctx.reply('Это сообщение уже добавлено в закреп ранее');
+                }
                 await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
 
 
