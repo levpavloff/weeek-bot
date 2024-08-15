@@ -160,6 +160,7 @@ connectDB()
 
         bot.callbackQuery(/pinselect_(.*)/, async (ctx) => {
             const messageId = ctx.match[1];
+            console.log(messageId);
             const selectedMessage = await Chat.findById(messageId);
 
             if (!selectedMessage) {
