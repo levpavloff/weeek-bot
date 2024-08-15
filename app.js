@@ -139,7 +139,8 @@ connectDB()
 
         // Обработка команды /managepin
         bot.command('managepin', async (ctx) => {
-            const messages = await Chat.find({ "chat_id": ctx.chat.id });
+            const messages = await Chat.find({ "chat_id": ctx.message.chat.id });
+
 
             if (!messages) {
                 return ctx.reply('Не могу найти группу');
