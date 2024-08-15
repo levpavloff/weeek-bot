@@ -143,6 +143,8 @@ connectDB()
             console.log(`Webhook has been set up.`);
         });
 
+        bot.reaction("🎉", (ctx) => ctx.reply("whoop whoop"));
+
     })
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
