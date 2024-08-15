@@ -95,7 +95,7 @@ connectDB()
             // Проверяем, является ли это сообщение ответом на другое сообщение
             if (ctx.message.reply_to_message) {
                 const repliedMessage = ctx.message.reply_to_message;
-                const messageText = repliedMessage.text || '<Медиа или пустое сообщение>';
+                const messageText = repliedMessage.text || repliedMessage.document.file_name + ' ' + repliedMessage.caption || '<Пустое сообщение>';
                 const parsedMessage = await summaryMessage(`${repliedMessage.from.first_name} написал: ${messageText}`);
 
 
