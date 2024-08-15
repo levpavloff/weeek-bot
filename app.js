@@ -203,9 +203,12 @@ connectDB()
 
             await ctx.editMessageText('Введите новое описание:');
 
-            // Используем `once`, чтобы бот ожидал только одно следующее сообщение
-            const onMessageHandler = async (ctx) => {
-                const newSummary = ctx.message.text;
+            // Создаем функцию-обработчик
+            const onMessageHandler = async (msgCtx) => {
+                // Проверяем, что сообщение пришло от того же пользователя
+                if (msgCtx.chat.id !== chatId) return;
+
+                const newSummary = msgCtx.message.text;
 
                 // Обновляем описание в базе данных
                 await Chat.updateOne(
@@ -213,11 +216,14 @@ connectDB()
                     { $set: { 'pinned_messages.$.summary': newSummary } }
                 );
 
-                await ctx.reply('Описание успешно обновлено!');
+                await msgCtx.reply('Описание успешно обновлено!');
+
+                // Удаляем обработчик, чтобы не слушать другие сообщения
+                bot.off('message', onMessageHandler);
             };
 
-            // Ожидаем одно сообщение от пользователя
-            bot.once('message', onMessageHandler);
+            // Включаем обработчик сообщений
+            bot.on('message', onMessageHandler);
         });
 
         bot.callbackQuery(/pindelete_(\d+)/, async (ctx) => {
