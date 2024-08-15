@@ -270,6 +270,26 @@ connectDB()
 // Обработка сообщений
         bot.on('message', async (ctx) => {
             const userId = ctx.from.id;
+            console.log(ctx);
+            // Проверяем, содержит ли сообщение новый закреп
+            if (ctx.message.pinned_message) {
+                const chatId = ctx.chat.id;
+                const pinnedMessage = ctx.message.pinned_message;
+                console.log(pinnedMessage)
+
+                // Проверяем, кто закрепил сообщение
+                const userWhoPinned = ctx.from;
+                console.log(userWhoPinned)
+
+                // Проверяем, что это не бот закрепил сообщение
+                if (userWhoPinned.id !== (await bot.api.getMe()).id) {
+                    // Снимаем закреп
+                    await ctx.unpinChatMessage(pinnedMessage.message_id);
+
+                    // Отправляем уведомление пользователю
+                    await ctx.reply("Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в навигационном посте.");
+                }
+            }
 
             // Проверяем, находится ли пользователь в состоянии ожидания ответа
             if (editMessageState[userId]) {
@@ -337,29 +357,7 @@ connectDB()
         });
 
 
-        // Отслеживаем событие закрепления сообщения
-        bot.on('message', async (ctx) => {
-            console.log(ctx)
-            // Проверяем, содержит ли сообщение новый закреп
-            if (ctx.message.pinned_message) {
-                const chatId = ctx.chat.id;
-                const pinnedMessage = ctx.message.pinned_message;
-                console.log(pinnedMessage)
 
-                // Проверяем, кто закрепил сообщение
-                const userWhoPinned = ctx.from;
-                console.log(userWhoPinned)
-
-                // Проверяем, что это не бот закрепил сообщение
-                if (userWhoPinned.id !== (await bot.api.getMe()).id) {
-                    // Снимаем закреп
-                    await ctx.unpinChatMessage(pinnedMessage.message_id);
-
-                    // Отправляем уведомление пользователю
-                    await ctx.reply("Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в навигационном посте.");
-                }
-            }
-        });
 
 
 
