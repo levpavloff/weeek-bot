@@ -13,8 +13,8 @@ const ChatSchema = new mongoose.Schema({
     },
     users: [String],
     main_message: { type: Number, default: 0 },
-    pinned_message: [{link: Number, message: String, author: String, date: Date, agenda: String}],
-    events: [{title: String, date: Date, zoom_link: String, zoom_id: String, subscribers: String, description: String}],
+    pinned_messages: [{id: Number, link: String, message: String, author: String, date: Date, summary: String, username: String}],
+    events: [{title: String, date: Date, zoom_link: String, zoom_id: String, subscribers: String, description: String, comments: String}],
 });
 
 module.exports = mongoose.model('Chat', ChatSchema);

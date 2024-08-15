@@ -253,7 +253,7 @@ async function sendMessageToTelegram(chatId, text) {
     }
 }
 
-// Запрос сессии по ID телеграм-юзера
+// Запрос названия проекта по chat_id
 async function getProjectName(groupId) {
     try {
         const project = await Chat.findOne({ chat_id: groupId });
@@ -267,6 +267,20 @@ async function getProjectName(groupId) {
         return null;
     }
 }
+async function saveToPined(params, groupId) {
+    try {
+        const project = await Chat.findOne({ chat_id: groupId });
+        if (project) {
+           project.pinned_message.push(params);
+           await project.save();
+            return true;
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске chat_id по update_id:', error);
+        return null;
+    }
+}
+
 
 module.exports = {
     addChat,
@@ -275,5 +289,6 @@ module.exports = {
     getDetails,
     checkAccess,
     sendResMsg,
-    getProjectName
+    getProjectName,
+    saveToPined
 };

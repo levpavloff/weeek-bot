@@ -95,28 +95,24 @@ connectDB()
             // Проверяем, является ли это сообщение ответом на другое сообщение
             if (ctx.message.reply_to_message) {
                 const repliedMessage = ctx.message.reply_to_message;
-
-                // Получаем текст сообщения или данные других типов
                 const messageText = repliedMessage.text || '<Медиа или пустое сообщение>';
+                const parsedMessage = await summaryMessage(`${repliedMessage.from.first_name} написал: ${messageText}`);
 
-                // Получаем информацию об авторе сообщения
-                const authorFirstName = repliedMessage.from.first_name;
-                const authorLastName = repliedMessage.from.last_name || '';
-                const authorUsername = repliedMessage.from.username ? `@${repliedMessage.from.username}` : '';
 
-                const authorFullName = `${authorFirstName} ${authorLastName}`.trim();
-                const parsedMessage = await summaryMessage(`${authorFullName} написал: ${messageText}`);
+                const params = {
+                    id: repliedMessage.message_id,
+                    link: `https://t.me/c/${String(repliedMessage.chat.id).slice(4)}/${repliedMessage.message_id}`,
+                    message: messageText,
+                    author: repliedMessage.from.first_name,
+                    date: ctx.message.date,
+                    summary: parsedMessage,
+                    username: repliedMessage.from.username
+                };
+                await chatController.saveToPined(params, repliedMessage.chat.id);
+                console.log(params)
 
-                // Ссылка на сообщение
-                const chatId = repliedMessage.chat.id;
-                const messageId = repliedMessage.message_id;
-                const messageLink = `https://t.me/c/${String(chatId).slice(4)}/${messageId}`;
 
-                // Выводим в консоль текст сообщения, ссылку и имя автора
-                console.log(`Сообщение: ${messageText}`);
-                console.log(`Cаммари: ${parsedMessage}`);
-                console.log(`Автор: ${authorFullName} ${authorUsername}`);
-                console.log(`Ссылка на сообщение: ${messageLink}`);
+
             } else {
                 ctx.reply('Пожалуйста, используйте команду /pin в ответ на сообщение, которое вы хотите закрепить.');
             }
