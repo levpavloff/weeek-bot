@@ -214,17 +214,32 @@ connectDB()
             });
         });
 
-// Обработка удаления сообщения
         bot.callbackQuery(/pindelete_(\d+)/, async (ctx) => {
-            const chatId = ctx.chat.id;
             const messageId = parseInt(ctx.match[1], 10);
 
+            // Показываем предупреждение
             await ctx.answerCallbackQuery({
-                text: 'Вы уверены, что хотите удалить сообщение?',
+                text: 'Вы уверены, что хотите удалить сообщение? Нажмите еще раз для подтверждения.',
                 show_alert: true,
             });
 
-            // Удаление сообщения из массива
+            // Обновляем callback_data для следующего этапа подтверждения
+            const keyboard = new InlineKeyboard()
+                .text('Да, удалить', `pinconfirm_delete_${messageId}`)
+                .row()
+                .text('Отмена', 'pincancel_delete');
+
+            await ctx.editMessageText('Вы точно хотите удалить это сообщение?', {
+                reply_markup: keyboard,
+            });
+        });
+
+// Обработка подтверждения удаления
+        bot.callbackQuery(/pinconfirm_delete_(\d+)/, async (ctx) => {
+            const chatId = ctx.chat.id;
+            const messageId = parseInt(ctx.match[1], 10);
+
+            // Удаляем сообщение после подтверждения
             await Chat.updateOne(
                 { chat_id: chatId },
                 { $pull: { pinned_messages: { id: messageId } } }
@@ -232,6 +247,13 @@ connectDB()
 
             await ctx.editMessageText('Сообщение успешно удалено.');
         });
+
+// Обработка отмены удаления
+        bot.callbackQuery('pincancel_delete', async (ctx) => {
+            await ctx.answerCallbackQuery('Удаление отменено.');
+            await ctx.editMessageText('Удаление было отменено.');
+        });
+
 
 
         // Запуск сервера
