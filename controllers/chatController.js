@@ -205,7 +205,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
         const prepareLinks = messages.map((message) => {
             return `<a href="${message.link}">- ${message.summary}</a>`;
         })
-
+        const inlineKeyboard = chunkArray(preparedLinks, 2);
 
         // Отправляем дополнительное сообщение в формате Markdown
         const additionalMessage = await ctx.api.sendMessage(groupChatId, '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
@@ -216,9 +216,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
             {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        preparedLinks
-                    ]
+                    inline_keyboard: inlineKeyboard
                 }
             });
 
@@ -311,6 +309,7 @@ async function addPinnedMessage(ctx,groupId) {
             const prepareLinks = messages.map((message) => {
                 return `<a href="${message.link}">- ${message.summary}</a>`;
             })
+            const inlineKeyboard = chunkArray(preparedLinks, 2);
             const updatedMessage = '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
                 '<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду. \n' +
                 'Чтобы закрепить важное сообщение, просто ответьте на него командой /pin. Я добавлю ссылку на это сообщение сюда и кратко опишу его содержание.</blockquote>\n\n' +
@@ -319,9 +318,7 @@ async function addPinnedMessage(ctx,groupId) {
             await ctx.api.editMessageText(groupId, postMessage, updatedMessage, {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        preparedLinks
-                    ]
+                    inline_keyboard: inlineKeyboard
                 }
             });
 
@@ -331,6 +328,15 @@ async function addPinnedMessage(ctx,groupId) {
         return null;
     }
 }
+
+function chunkArray(array, chunkSize) {
+    const result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
+}
+
 
 
 module.exports = {
