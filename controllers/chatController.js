@@ -282,6 +282,32 @@ async function saveToPined(params, groupId) {
     }
 }
 
+async function addPinnedMessage(groupId) {
+    try {
+        const project = await Chat.findOne({ chat_id: groupId });
+        console.log(project);
+        if (project) {
+            const messages = project.pinned_messages;
+            const postMessage = project.main_message;
+            const prepareLinks = messages.map((message) => {
+                return `<a href="${message.link}">- ${summary}</a>`;
+            })
+            const updatedMessage = '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
+                '<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду. \n' +
+                'Чтобы закрепить важное сообщение, просто ответьте на него командой /pin. Я добавлю ссылку на это сообщение сюда и кратко опишу его содержание.</blockquote>\n\n' +
+                '<b>Закрепленные сообщения:</b>\n\n' +
+                prepareLinks.join('\n') + '<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:';
+            await ctx.api.editMessageText(groupId, postMessage, updatedMessage, {
+                parse_mode: 'HTML'
+            });
+
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске chat_id по update_id:', error);
+        return null;
+    }
+}
+
 
 module.exports = {
     addChat,
@@ -291,5 +317,6 @@ module.exports = {
     checkAccess,
     sendResMsg,
     getProjectName,
-    saveToPined
+    saveToPined,
+    addPinnedMessage
 };
