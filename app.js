@@ -196,35 +196,52 @@ connectDB()
             await ctx.editMessageText('Выберите сообщение:', { reply_markup: keyboard });
         });
 
-// Обработка изменения описания
+// Хранилище состояний для отслеживания ожидания ответов от конкретных пользователей
+        const editMessageState = {};
+
+// Обработка команды редактирования описания
         bot.callbackQuery(/pinedit_(\d+)/, async (ctx) => {
             const chatId = ctx.chat.id;
+            const userId = ctx.from.id;
             const messageId = parseInt(ctx.match[1], 10);
 
             await ctx.editMessageText('Введите новое описание:');
 
-            // Создаем функцию-обработчик
-            const onMessageHandler = async (msgCtx) => {
-                // Проверяем, что сообщение пришло от того же пользователя
-                if (msgCtx.chat.id !== chatId) return;
+            // Устанавливаем состояние ожидания для конкретного пользователя
+            editMessageState[userId] = { chatId, messageId };
 
-                const newSummary = msgCtx.message.text;
-
-                // Обновляем описание в базе данных
-                await Chat.updateOne(
-                    { chat_id: chatId, 'pinned_messages.id': messageId },
-                    { $set: { 'pinned_messages.$.summary': newSummary } }
-                );
-
-                await msgCtx.reply('Описание успешно обновлено!');
-
-                // Удаляем обработчик, чтобы не слушать другие сообщения
-                bot.off('message', onMessageHandler);
-            };
-
-            // Включаем обработчик сообщений
-            bot.on('message', onMessageHandler);
+            // Устанавливаем таймер на сброс ожидания через 60 секунд (например)
+            setTimeout(() => {
+                delete editMessageState[userId];
+            }, 60000); // 1 минута
         });
+
+// Обработка сообщений
+        bot.on('message', async (ctx) => {
+            const userId = ctx.from.id;
+
+            // Проверяем, находится ли пользователь в состоянии ожидания ответа
+            if (editMessageState[userId]) {
+                const { chatId, messageId } = editMessageState[userId];
+
+                // Проверяем, что сообщение пришло из того же чата
+                if (ctx.chat.id === chatId) {
+                    const newSummary = ctx.message.text;
+
+                    // Обновляем описание в базе данных
+                    await Chat.updateOne(
+                        { chat_id: chatId, 'pinned_messages.id': messageId },
+                        { $set: { 'pinned_messages.$.summary': newSummary } }
+                    );
+
+                    await ctx.reply('Описание успешно обновлено!');
+
+                    // Удаляем состояние, чтобы больше не слушать другие сообщения
+                    delete editMessageState[userId];
+                }
+            }
+        });
+
 
         bot.callbackQuery(/pindelete_(\d+)/, async (ctx) => {
             const messageId = parseInt(ctx.match[1], 10);
