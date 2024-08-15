@@ -233,6 +233,7 @@ connectDB()
                         { chat_id: chatId, 'pinned_messages.id': messageId },
                         { $set: { 'pinned_messages.$.summary': newSummary } }
                     );
+                    await chatController.addPinnedMessage(ctx,chatId);
 
                     await ctx.reply('Описание успешно обновлено!');
 
@@ -273,6 +274,7 @@ connectDB()
                 { chat_id: chatId },
                 { $pull: { pinned_messages: { id: messageId } } }
             );
+            await chatController.addPinnedMessage(ctx,chatId);
 
             await ctx.editMessageText('Сообщение успешно удалено.');
         });

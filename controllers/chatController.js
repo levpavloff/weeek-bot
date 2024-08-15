@@ -334,6 +334,8 @@ async function addPinnedMessage(ctx,groupId) {
     }
 }
 
+
+
 function chunkArray(array, chunkSize) {
     const result = [];
     for (let i = 0; i < array.length; i += chunkSize) {
