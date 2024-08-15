@@ -86,8 +86,7 @@ connectDB()
                 parse_mode: 'Markdown'
             });
 
-            console.log(response);
-            console.log(messageText); // Выводим в консоль текст после команды /zoom  // test
+
         });
 
         // Обработчик команды /pin
@@ -132,13 +131,18 @@ connectDB()
 
         // Запуск сервера
         app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
+            const options = { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const formatter = new Intl.DateTimeFormat('ru-RU', options);
+            const moscowTime = formatter.format(new Date());
+
+            console.log(`Server is running on port ${port} at ${moscowTime} (МСК)`);
 
             // Устанавливаем вебхук для бота
             bot.api.setWebhook(`https://server.hmn.su/sandbot/telegram-webhook`);
 
             console.log(`Webhook has been set up.`);
         });
+
     })
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
