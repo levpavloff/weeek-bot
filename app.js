@@ -343,9 +343,11 @@ connectDB()
             if (ctx.message.pinned_message) {
                 const chatId = ctx.chat.id;
                 const pinnedMessage = ctx.message.pinned_message;
+                console.log(pinnedMessage)
 
                 // Проверяем, кто закрепил сообщение
                 const userWhoPinned = ctx.from;
+                console.log(userWhoPinned)
 
                 // Проверяем, что это не бот закрепил сообщение
                 if (userWhoPinned.id !== (await bot.api.getMe()).id) {
