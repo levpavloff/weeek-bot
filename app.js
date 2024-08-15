@@ -10,6 +10,8 @@ const { sendQuestion } = require('./services/zoomGptApi');
 const {summaryMessage} = require('./services/gptSummaryPin');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
+const Chat = require('./models/chatModel');
+
 
 
 const app = express();
@@ -111,8 +113,10 @@ connectDB()
                 const saveToPin= await chatController.saveToPined(params, repliedMessage.chat.id);
                 if(!saveToPin) {
                     ctx.reply('Это сообщение уже добавлено в закреп ранее');
+                } else {
+                    await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
                 }
-                await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
+
 
 
 
@@ -132,6 +136,89 @@ connectDB()
                 ctx.reply('Пожалуйста, используйте команду /log в ответ на сообщение, которое вы хотите проверить.');
             }
         });
+
+        // Обработка команды /managepin
+        bot.command('managepin', async (ctx) => {
+            const messages = await Chat.find({ "chat_id": ctx.chat.id });
+
+            if (!messages) {
+                return ctx.reply('Не могу найти группу');
+            } else{
+                if (messages.pinned_messages.length === 0) {
+                    return ctx.reply('В группе нет закрепленных сообщений');
+                }
+            }
+
+            const keyboard = new InlineKeyboard();
+            messages.pinned_messages.forEach((msg) => {
+                keyboard.text(msg.summary, `pinselect_${msg._id}`).row();
+            });
+
+            await ctx.reply('Выберите сообщение:', { reply_markup: keyboard });
+        });
+
+        bot.callbackQuery(/pinselect_(.*)/, async (ctx) => {
+            const messageId = ctx.match[1];
+            const selectedMessage = await Chat.findById(messageId);
+
+            if (!selectedMessage) {
+                return ctx.answerCallbackQuery('Сообщение не найдено.');
+            }
+
+            const keyboard = new InlineKeyboard()
+                .text('Назад', 'pinback')
+                .row()
+                .text('Изменить описание', `pinedit_${messageId}`)
+                .row()
+                .text('Удалить сообщение', `pindelete_${messageId}`);
+
+            await ctx.editMessageText(`Вы выбрали сообщение: ${selectedMessage.summary}\n\nВыберите действие:`, { reply_markup: keyboard });
+        });
+
+        // Обработка нажатия кнопки "Назад"
+        bot.callbackQuery('pinback', async (ctx) => {
+            const chat = await Chat.find({ "chat_id": ctx.chat.id });
+
+            if (!chat) {
+                return ctx.reply('Не могу найти группу');
+            } else{
+                if (chat.pinned_messages.length === 0) {
+                    return ctx.reply('В группе нет закрепленных сообщений');
+                }
+            }
+            const messages = chat.pinned_messages;
+
+            const keyboard = new InlineKeyboard();
+            messages.forEach((msg) => {
+                keyboard.text(msg.summary, `select_${msg._id}`).row();
+            });
+
+            await ctx.editMessageText('Выберите сообщение:', { reply_markup: keyboard });
+        });
+
+        // Обработка изменения описания
+        bot.callbackQuery(/pinedit_(.*)/, async (ctx) => {
+            const messageId = ctx.match[1];
+            await ctx.editMessageText('Введите новое описание:');
+
+            // Ожидание ввода нового описания
+            bot.on('message', async (ctx) => {
+                const newSummary = ctx.message.text;
+                await Chat.findByIdAndUpdate(messageId, { summary: newSummary });
+                await ctx.reply('Описание успешно обновлено!');
+            });
+        });
+
+        // Обработка удаления сообщения
+        bot.callbackQuery(/pindelete_(.*)/, async (ctx) => {
+            const messageId = ctx.match[1];
+            await ctx.answerCallbackQuery('Вы уверены, что хотите удалить сообщение?', { show_alert: true });
+
+            // Удаление сообщения из базы
+            await Chat.findByIdAndDelete(messageId);
+            await ctx.editMessageText('Сообщение успешно удалено.');
+        });
+
 
         // Запуск сервера
         app.listen(port, () => {
