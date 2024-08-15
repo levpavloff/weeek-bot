@@ -139,19 +139,19 @@ connectDB()
 
         // Обработка команды /managepin
         bot.command('managepin', async (ctx) => {
-            const messages = await Chat.find({ "chat_id": ctx.message.chat.id });
+            const chat = await Chat.findOne({ "chat_id": ctx.message.chat.id });
 
 
-            if (!messages) {
+            if (!chat) {
                 return ctx.reply('Не могу найти группу');
             } else{
-                if (messages.pinned_messages.length === 0) {
+                if (chat.pinned_messages.length === 0) {
                     return ctx.reply('В группе нет закрепленных сообщений');
                 }
             }
 
             const keyboard = new InlineKeyboard();
-            messages.pinned_messages.forEach((msg) => {
+            chat.pinned_messages.forEach((msg) => {
                 keyboard.text(msg.summary, `pinselect_${msg._id}`).row();
             });
 
