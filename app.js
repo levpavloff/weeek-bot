@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Bot, webhookCallback } = require('grammy');
+const {InlineKeyboard, Bot, webhookCallback } = require('grammy');
 const chatController = require('./controllers/chatController');
 const connectDB = require('./config/database');
 const apiRoutes = require('./routes/apiRoutes');
