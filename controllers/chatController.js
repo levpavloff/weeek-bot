@@ -179,6 +179,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
 
         await getDetails(ctx, projectId);
         await removeSession(userId);
+        await ctx.api.unpinAllChatMessages(groupChatId)
 
         function encodeYourData(data) {
             return Buffer.from(data, 'utf-8').toString('base64');
