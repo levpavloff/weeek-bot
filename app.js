@@ -115,6 +115,7 @@ connectDB()
                     ctx.reply('Это сообщение уже добавлено в закреп ранее');
                 } else {
                     await chatController.addPinnedMessage(ctx, repliedMessage.chat.id);
+                    ctx.reply(`Сообщение <a href="${params.link}">закреплено</a>`, {parse_mode: 'HTML'});
                 }
 
 
