@@ -97,7 +97,55 @@ connectDB()
             // Проверяем, является ли это сообщение ответом на другое сообщение
             if (ctx.message.reply_to_message) {
                 const repliedMessage = ctx.message.reply_to_message;
-                const messageText = repliedMessage.text || repliedMessage.document.file_name + ' ' + repliedMessage.caption || '<Пустое сообщение>';
+
+                if (!repliedMessage) {
+                    // Если нет ответа на сообщение, выходим
+                    return ctx.reply('Ответьте на сообщение, которое нужно обработать.');
+                }
+
+                let messageText = '<Пустое сообщение>'; // Дефолтное значение
+
+// Проверяем текстовое сообщение
+                if (repliedMessage.text) {
+                    messageText = repliedMessage.text;
+                }
+// Проверяем документ (файл)
+                else if (repliedMessage.document) {
+                    messageText = repliedMessage.document.file_name;
+                    if (repliedMessage.caption) {
+                        messageText += `: ${repliedMessage.caption}`; // Добавляем описание к файлу, если оно есть
+                    }
+                }
+// Проверяем фото
+                else if (repliedMessage.photo) {
+                    messageText = '<Изображение>';
+                    if (repliedMessage.caption) {
+                        messageText += `: ${repliedMessage.caption}`; // Добавляем описание к изображению, если оно есть
+                    }
+                }
+// Проверяем видео
+                else if (repliedMessage.video) {
+                    messageText = '<Видео>';
+                    if (repliedMessage.caption) {
+                        messageText += `: ${repliedMessage.caption}`; // Добавляем описание к видео, если оно есть
+                    }
+                }
+// Проверяем аудио
+                else if (repliedMessage.audio) {
+                    messageText = repliedMessage.audio.file_name;
+                    if (repliedMessage.caption) {
+                        messageText += `: ${repliedMessage.caption}`; // Добавляем описание к аудио, если оно есть
+                    }
+                }
+// Проверяем голосовое сообщение
+                else if (repliedMessage.voice) {
+                    messageText = '<Голосовое сообщение>';
+                }
+// Проверяем стикер
+                else if (repliedMessage.sticker) {
+                    messageText = `<Стикер: ${repliedMessage.sticker.emoji || ''}>`;
+                }
+
                 const parsedMessage = await summaryMessage(`${repliedMessage.from.first_name} написал: ${messageText}`);
 
 
