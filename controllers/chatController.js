@@ -290,7 +290,7 @@ async function addPinnedMessage(groupId) {
             const messages = project.pinned_messages;
             const postMessage = project.main_message;
             const prepareLinks = messages.map((message) => {
-                return `<a href="${message.link}">- ${summary}</a>`;
+                return `<a href="${message.link}">- ${message.summary}</a>`;
             })
             const updatedMessage = '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
                 '<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду. \n' +
