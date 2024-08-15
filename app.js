@@ -270,16 +270,21 @@ connectDB()
 // Обработка сообщений
         bot.on('message', async (ctx) => {
             const userId = ctx.from.id;
-            console.log(ctx);
+
             // Проверяем, содержит ли сообщение новый закреп
             if (ctx.message.pinned_message) {
-                const chatId = ctx.chat.id;
                 const pinnedMessage = ctx.message.pinned_message;
-                console.log(pinnedMessage)
+                const chatId = ctx.chat.id;
+                const chat = await Chat.findOne({ chat_id: chatId });
+                if(!chat) {
+                    return;
+                }
+                const mainMessage = chat.main_message;
+                const mainLink = `https://t.me/c/${String(chatId).slice(4)}/${mainMessage}`;
 
                 // Проверяем, кто закрепил сообщение
                 const userWhoPinned = ctx.from;
-                console.log(userWhoPinned)
+
 
                 // Проверяем, что это не бот закрепил сообщение
                 if (userWhoPinned.id !== (await bot.api.getMe()).id) {
@@ -287,7 +292,7 @@ connectDB()
                     await ctx.unpinChatMessage(pinnedMessage.message_id);
 
                     // Отправляем уведомление пользователю
-                    await ctx.reply("Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в навигационном посте.");
+                    await ctx.reply(`Воспользуйтесь командой /pin в ответ на сообщение, чтобы закрепить его в <a href="${mainLink}">навигационном посте.</a>`, {parse_mode: 'HTML'});
                 }
             }
 
