@@ -169,7 +169,13 @@ const updateChatProject = async (ctx, projectId, projectName) => {
         console.log('Проект успешно обновлен.');
 
         let links = await Link.find();
-        console.log(links);
+        const preparedLinks = links.map(link => {
+            return {
+            text: link.text,
+            url: link.url
+        }}
+        );
+
 
         await getDetails(ctx, projectId);
         await removeSession(userId);
@@ -193,24 +199,24 @@ const updateChatProject = async (ctx, projectId, projectName) => {
 
         // Закрепляем сообщение
         await ctx.api.pinChatMessage(groupChatId, startMessage.message_id);
+        const project = await Chat.findOne({ chat_id: groupChatId });
+        const messages = project.pinned_messages;
+        const prepareLinks = messages.map((message) => {
+            return `<a href="${message.link}">- ${message.summary}</a>`;
+        })
 
 
         // Отправляем дополнительное сообщение в формате Markdown
         const additionalMessage = await ctx.api.sendMessage(groupChatId, '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
             '<blockquote>Это сообщение будет закреплено вверху, чтобы кнопка оставалась на виду. \n' +
             'Чтобы закрепить важное сообщение, просто ответьте на него командой /pin. Я добавлю ссылку на это сообщение сюда и кратко опишу его содержание.</blockquote>\n\n' +
-            '<b>Закрепленные сообщения:</b>\n\n' +
-            '<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:',
+            '<b>Закрепленные сообщения:</b>\n\n' + prepareLinks.join('\n') +
+            '\n\n<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:',
             {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
-                        [
-                            {
-                                text: 'Открыть базу знаний',
-                                url: 'https://example.com/knowledge-base'
-                            }
-                        ]
+                        preparedLinks
                     ]
                 }
             });
@@ -289,6 +295,13 @@ async function saveToPined(params, groupId) {
 
 async function addPinnedMessage(ctx,groupId) {
     try {
+        let links = await Link.find();
+        const preparedLinks = links.map(link => {
+            return {
+                text: link.text,
+                url: link.url
+            }}
+        );
         const project = await Chat.findOne({ chat_id: groupId });
         console.log(project);
         if (project) {
@@ -303,7 +316,12 @@ async function addPinnedMessage(ctx,groupId) {
                 '<b>Закрепленные сообщения:</b>\n\n' +
                 prepareLinks.join('\n') + '\n\n<b>Также здесь будут важные статьи</b> из нашей базы знаний для вашей работы. Обязательно ознакомьтесь:';
             await ctx.api.editMessageText(groupId, postMessage, updatedMessage, {
-                parse_mode: 'HTML'
+                parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        preparedLinks
+                    ]
+                }
             });
 
         }
