@@ -1,6 +1,7 @@
 const Chat = require('../models/chatModel');
 const Session = require('../models/sessionModel');
 const Admin = require('../models/adminModel');
+const Link = require('../models/linksModel');
 const projectService = require('../services/projectService');
 const boardService = require('../services/boardService');
 const { InlineKeyboard } = require('grammy');
@@ -167,6 +168,9 @@ const updateChatProject = async (ctx, projectId, projectName) => {
         }
         console.log('Проект успешно обновлен.');
 
+        let links = await Link.find();
+        console.log(links);
+
         await getDetails(ctx, projectId);
         await removeSession(userId);
 
@@ -189,6 +193,7 @@ const updateChatProject = async (ctx, projectId, projectName) => {
 
         // Закрепляем сообщение
         await ctx.api.pinChatMessage(groupChatId, startMessage.message_id);
+
 
         // Отправляем дополнительное сообщение в формате Markdown
         const additionalMessage = await ctx.api.sendMessage(groupChatId, '<b>В этом сообщении мы будем собирать всё самое важное.</b>\n\n' +
