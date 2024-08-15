@@ -282,6 +282,9 @@ async function saveToPined(params, groupId) {
         const project = await Chat.findOne({ chat_id: groupId });
 
         if (project) {
+            if(project.pinned_messages.some(message => message.id === params.id)) {
+                return false
+            }
            project.pinned_messages.push(params);
            await project.save();
             return true;

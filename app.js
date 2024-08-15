@@ -100,7 +100,7 @@ connectDB()
 
 
                 const params = {
-                    id: repliedMessage.message_id,
+                    c: repliedMessage.message_id,
                     link: `https://t.me/c/${String(repliedMessage.chat.id).slice(4)}/${repliedMessage.message_id}`,
                     message: messageText,
                     author: repliedMessage.from.first_name,
@@ -129,7 +129,6 @@ connectDB()
                 ctx.reply('Пожалуйста, используйте команду /log в ответ на сообщение, которое вы хотите проверить.');
             }
         });
-        bot.reaction("🎉", (ctx) => console.log('Reaction!'));
 
         // Запуск сервера
         app.listen(port, () => {
