@@ -86,10 +86,10 @@ connectDB()
             const response = await sendQuestion(projectName,messageText);
             console.log('Ответ от GPT API - ' + response);
             const obj = JSON.parse(response);
-            console.log(obj);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
             obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
-            const createZoom = await createZoomMeeting(JSON.stringify(obj));
+            console.log(obj);
+            const createZoom = await createZoomMeeting(obj);
             console.log(createZoom);
             await ctx.reply(JSON.stringify(obj), {
                 parse_mode: 'Markdown'
