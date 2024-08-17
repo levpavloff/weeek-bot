@@ -75,7 +75,13 @@ connectDB()
             ctx.editMessageText(`Проект ${projectName} (${projectId}) успешно выбран.`);
         });
 
-        // Обработчик регистрации Zoom конференций
+        // Функция для конвертации времени в московское время (UTC+3)
+        function convertToMoscowTime(utcDate) {
+            const moscowOffset = 3 * 60 * 60 * 1000; // Сдвиг на +3 часа в миллисекундах
+            const moscowDate = new Date(utcDate.getTime() + moscowOffset);
+            return moscowDate;
+        }
+
         bot.command('zoom', async (ctx) => {
             try {
                 // Извлекаем текст после команды /zoom
@@ -95,13 +101,17 @@ connectDB()
                 // Парсинг и корректировка даты
                 const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
                 obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000); // Корректируем на 3 часа
+
                 console.log('Объект с конечной датой - ', obj);
+
+                // Конвертируем UTC в московское время
+                const moscowDate = convertToMoscowTime(obj.data.date);
 
                 // Формируем сообщение для подтверждения встречи
                 const confirmText = `
 Вы хотите создать встречу в ZOOM со следующими параметрами:
 - Название: ${obj.data.project}
-- Дата проведения: ${obj.data.date.toISOString()}
+- Дата проведения: ${moscowDate.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
 - Описание: ${obj.data.description}
 `;
 
@@ -124,11 +134,14 @@ connectDB()
                         console.log('Ответ Zoom:', createZoom);
 
                         if (createZoom.success) {
+                            // Конвертируем дату встречи в московское время
+                            const meetingMoscowDate = convertToMoscowTime(new Date(createZoom.meetingDetails.start_time));
+
                             // Формируем сообщение с информацией о созданной встрече
                             const meetingInfo = `
 Встреча успешно создана!
 - Название: ${createZoom.meetingDetails.topic}
-- Дата: ${createZoom.meetingDetails.start_time}
+- Дата: ${meetingMoscowDate.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
 - Ссылка на подключение: [Присоединиться](${createZoom.meetingDetails.join_url})
 - Пароль: ${createZoom.meetingDetails.password}
 `;
