@@ -1,25 +1,26 @@
-const axios = require('axios');
-const qs = require('qs'); // Для работы с query строками
 require('dotenv').config();
+const axios = require('axios');
 
-// Zoom API конфигурация
 const clientId = process.env.zClientId; // Ваш Client ID
 const clientSecret = process.env.zClientSecret; // Ваш Client Secret
+const accountId = process.env.zAccoundId; // Ваш Account ID
 
 // Функция для получения OAuth токена
 async function getAccessToken() {
-    const tokenUrl = 'https://zoom.us/oauth/token';
+    const tokenUrl = `https://zoom.us/oauth/token`;
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     const requestData = {
-        grant_type: 'client_credentials'
+        grant_type: 'account_credentials',
+        account_id: accountId
     };
 
     try {
-        const response = await axios.post(tokenUrl, qs.stringify(requestData), {
+        const response = await axios.post(tokenUrl, null, {
             headers: {
                 Authorization: `Basic ${authHeader}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            },
+            params: requestData
         });
 
         return response.data.access_token;
@@ -29,12 +30,11 @@ async function getAccessToken() {
     }
 }
 
-// Функция для создания встречи в Zoom
+// Пример использования токена для создания встречи
 async function createZoomMeeting(meetingParams) {
     const accessToken = await getAccessToken();
     const { project, date, description, participants } = meetingParams.data;
 
-    // Данные для создания встречи
     const meetingData = {
         topic: project,
         type: 2, // Scheduled meeting
@@ -73,5 +73,7 @@ async function createZoomMeeting(meetingParams) {
         };
     }
 }
+
+
 
 module.exports = { createZoomMeeting };

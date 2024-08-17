@@ -89,9 +89,9 @@ connectDB()
             if(!obj.success) return ctx.reply('Ошибка, загляните в консоль:'+obj.reason);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
             obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
-            console.log(obj);
+            console.log('Объект с конечной датой - ' + obj);
             const createZoom = await createZoomMeeting(obj);
-            console.log(createZoom);
+            console.log('Ответ зума' + createZoom);
             await ctx.reply(JSON.stringify(obj), {
                 parse_mode: 'Markdown'
             });
