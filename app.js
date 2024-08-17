@@ -82,6 +82,19 @@ connectDB()
             return moscowDate;
         }
 
+// Функция для форматирования даты в "человеческий" язык
+        function formatHumanReadableDate(date) {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric'
+            };
+            return date.toLocaleString('ru-RU', options);
+        }
+
         bot.command('zoom', async (ctx) => {
             try {
                 // Извлекаем текст после команды /zoom
@@ -98,20 +111,22 @@ connectDB()
                 const obj = JSON.parse(response);
                 if (!obj.success) return ctx.reply('Ошибка, загляните в консоль: ' + obj.reason);
 
-                // Парсинг и корректировка даты
-                const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
-                obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000); // Корректируем на 3 часа
+                // Парсинг даты с учетом того, что изначально она была в московском часовом поясе
+                const parsedDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
+
+                // Так как `chrono` интерпретирует время как UTC, мы добавляем 3 часа обратно, чтобы получить корректное московское время
+                obj.data.date = new Date(parsedDate.getTime() + 3 * 60 * 60 * 1000); // Возвращаем смещение +3 часа
 
                 console.log('Объект с конечной датой - ', obj);
 
-                // Конвертируем UTC в московское время
-                const moscowDate = convertToMoscowTime(obj.data.date);
+                // Формируем "человеческий" формат даты
+                const humanReadableDate = formatHumanReadableDate(obj.data.date);
 
                 // Формируем сообщение для подтверждения встречи
                 const confirmText = `
 Вы хотите создать встречу в ZOOM со следующими параметрами:
 - Название: ${obj.data.project}
-- Дата проведения: ${moscowDate.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
+- Дата проведения: ${humanReadableDate}
 - Описание: ${obj.data.description}
 `;
 
@@ -137,11 +152,14 @@ connectDB()
                             // Конвертируем дату встречи в московское время
                             const meetingMoscowDate = convertToMoscowTime(new Date(createZoom.meetingDetails.start_time));
 
+                            // Формируем "человеческий" формат даты
+                            const humanMeetingDate = formatHumanReadableDate(meetingMoscowDate);
+
                             // Формируем сообщение с информацией о созданной встрече
                             const meetingInfo = `
 Встреча успешно создана!
 - Название: ${createZoom.meetingDetails.topic}
-- Дата: ${meetingMoscowDate.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
+- Дата: ${humanMeetingDate}
 - Ссылка на подключение: [Присоединиться](${createZoom.meetingDetails.join_url})
 - Пароль: ${createZoom.meetingDetails.password}
 `;
