@@ -81,6 +81,11 @@ connectDB()
             return DateTime.fromJSDate(parsedDate).setZone('Europe/Moscow').toJSDate();
         }
 
+// Функция для конвертации московского времени в UTC перед отправкой в Zoom
+        function convertToUtcFromMoscow(moscowDate) {
+            return DateTime.fromJSDate(moscowDate).setZone('UTC').toJSDate();
+        }
+
 // Функция для форматирования даты в "человеческий" язык
         function formatHumanReadableDate(date) {
             const options = {
@@ -116,7 +121,7 @@ connectDB()
                 // Конвертируем время в московское с помощью luxon
                 const moscowDate = convertToMoscowTime(parsedDate);
 
-                // Обновляем дату в объекте
+                // Обновляем дату в объекте для отображения пользователю (в московском времени)
                 obj.data.date = moscowDate;
 
                 console.log('Объект с конечной датой - ', obj);
@@ -146,6 +151,10 @@ connectDB()
                 bot.callbackQuery(['create_zoom_meeting', 'cancel_zoom_meeting'], async (callbackCtx) => {
                     // Проверяем какая кнопка была нажата
                     if (callbackCtx.match === 'create_zoom_meeting') {
+                        // Преобразуем московское время в UTC перед отправкой в Zoom
+                        const utcDateForZoom = convertToUtcFromMoscow(moscowDate);
+                        obj.data.date = utcDateForZoom;
+
                         // Отправляем запрос на создание встречи в Zoom
                         const createZoom = await createZoomMeeting(obj);
                         console.log('Ответ Zoom:', createZoom);
