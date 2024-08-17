@@ -83,6 +83,7 @@ connectDB()
             const projectName = await chatController.getProjectName(groupId);
             const response = await sendQuestion(projectName,messageText);
             const obj = JSON.parse(response);
+            console.log(obj);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
             obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
             const createZoom = await createZoomMeeting(JSON.stringify(obj));
