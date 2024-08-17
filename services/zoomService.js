@@ -41,7 +41,7 @@ async function createZoomMeeting(meetingParams) {
         start_time: date,
         duration: 60, // Время встречи в минутах
         timezone: 'UTC',
-        agenda: description,
+        agenda: project,
         settings: {
             host_video: true,
             participant_video: true,
@@ -74,6 +74,31 @@ async function createZoomMeeting(meetingParams) {
     }
 }
 
+// Функция для запроса всех запланированных созвонов
+async function getAllScheduledMeetings() {
+    const accessToken = await getAccessToken();
+
+    try {
+        const response = await axios.get(`https://api.zoom.us/v2/users/me/meetings`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            params: {
+                type: 'scheduled', // Только запланированные встречи
+                page_size: 100 // Максимальное количество встреч на одной странице
+            }
+        });
+
+        // Выводим все запланированные встречи в консоль
+        console.log('Запланированные встречи:', response.data.meetings);
+
+        return response.data.meetings;
+    } catch (error) {
+        console.error('Error fetching scheduled meetings:', error.response ? error.response.data : error.message);
+        return [];
+    }
+}
 
 
-module.exports = { createZoomMeeting };
+module.exports = { createZoomMeeting, getAllScheduledMeetings };
