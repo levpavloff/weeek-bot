@@ -36,7 +36,7 @@ async function createZoomMeeting(meetingParams) {
     const { project, date, description, participants } = meetingParams.data;
 
     const meetingData = {
-        topic: project,
+        topic: `${project}: ${description}`,
         type: 2, // Scheduled meeting
         start_time: date,
         duration: 60, // Время встречи в минутах
