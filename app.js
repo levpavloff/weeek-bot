@@ -86,6 +86,7 @@ connectDB()
             const response = await sendQuestion(projectName,messageText);
             console.log('Ответ от GPT API - ' + response);
             const obj = JSON.parse(response);
+            if(!obj.success) return ctx.reply('Ошибка, загляните в консоль:'+obj.reason);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
             obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
             console.log(obj);
