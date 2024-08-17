@@ -8,6 +8,7 @@ const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
 const { sendQuestion } = require('./services/zoomGptApi');
 const {summaryMessage} = require('./services/gptSummaryPin');
+const { createZoomMeeting } = require('./services/zoomService');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 const Chat = require('./models/chatModel');
@@ -84,7 +85,8 @@ connectDB()
             const obj = JSON.parse(response);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
             obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
-
+            const createZoom = await createZoomMeeting(JSON.stringify(obj));
+            console.log(createZoom);
             await ctx.reply(JSON.stringify(obj), {
                 parse_mode: 'Markdown'
             });
