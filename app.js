@@ -8,7 +8,7 @@ const apiRoutes = require('./routes/apiRoutes');
 const cors = require('cors');
 const { sendQuestion } = require('./services/zoomGptApi');
 const {summaryMessage} = require('./services/gptSummaryPin');
-const { createZoomMeeting } = require('./services/zoomService');
+const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomService');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 const { DateTime } = require('luxon');
@@ -290,6 +290,10 @@ connectDB()
             } else {
                 ctx.reply('Пожалуйста, используйте команду /log в ответ на сообщение, которое вы хотите проверить.');
             }
+        });
+        bot.command('getzoom', async (ctx) => {
+            // Проверяем, является ли это сообщение ответом на другое сообщение
+            await getAllScheduledMeetings();
         });
 
         bot.command('managepin', async (ctx) => {
