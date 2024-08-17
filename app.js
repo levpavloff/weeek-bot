@@ -81,7 +81,10 @@ connectDB()
             const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
             const groupId = ctx.message.chat.id;
             const projectName = await chatController.getProjectName(groupId);
+            console.log('Название проекта - ' + projectName);
+            console.log('Текст запроса - ' + messageText);
             const response = await sendQuestion(projectName,messageText);
+            console.log('Ответ от Zoom API - ' + response);
             const obj = JSON.parse(response);
             console.log(obj);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
