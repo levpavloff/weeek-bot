@@ -84,7 +84,7 @@ connectDB()
             console.log('Название проекта - ' + projectName);
             console.log('Текст запроса - ' + messageText);
             const response = await sendQuestion(projectName,messageText);
-            console.log('Ответ от Zoom API - ' + response);
+            console.log('Ответ от GPT API - ' + response);
             const obj = JSON.parse(response);
             console.log(obj);
             const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
