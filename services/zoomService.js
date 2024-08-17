@@ -34,7 +34,7 @@ async function getAccessToken() {
 async function createZoomMeeting(meetingParams) {
     const accessToken = await getAccessToken();
     const { project, date, description, participants } = meetingParams.data;
-
+    console.log(meetingParams);
     const meetingData = {
         topic: `${project}: ${description}`,
         type: 2, // Scheduled meeting
