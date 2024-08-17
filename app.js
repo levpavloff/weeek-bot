@@ -78,7 +78,7 @@ connectDB()
         // Функция для конвертации времени в московское время (UTC+3)
         function convertToMoscowTime(utcDate) {
             const moscowOffset = 3 * 60 * 60 * 1000; // Сдвиг на +3 часа в миллисекундах
-            const moscowDate = new Date(utcDate.getTime() + moscowOffset);
+            const moscowDate = new Date(utcDate.getTime() - moscowOffset); // Теперь мы вычитаем 3 часа
             return moscowDate;
         }
 
@@ -111,16 +111,19 @@ connectDB()
                 const obj = JSON.parse(response);
                 if (!obj.success) return ctx.reply('Ошибка, загляните в консоль: ' + obj.reason);
 
-                // Парсинг даты с учетом того, что изначально она была в московском часовом поясе
+                // Парсинг даты с учетом московского часового пояса
                 const parsedDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
 
-                // Так как `chrono` интерпретирует время как UTC, мы добавляем 3 часа обратно, чтобы получить корректное московское время
-                obj.data.date = new Date(parsedDate.getTime() + 3 * 60 * 60 * 1000); // Возвращаем смещение +3 часа
+                // Корректируем parsedDate, вычитая UTC+3 (московское время)
+                const moscowDate = convertToMoscowTime(parsedDate);
+
+                // Обновляем дату в объекте
+                obj.data.date = moscowDate;
 
                 console.log('Объект с конечной датой - ', obj);
 
                 // Формируем "человеческий" формат даты
-                const humanReadableDate = formatHumanReadableDate(obj.data.date);
+                const humanReadableDate = formatHumanReadableDate(moscowDate);
 
                 // Формируем сообщение для подтверждения встречи
                 const confirmText = `
@@ -182,6 +185,7 @@ connectDB()
                 await ctx.reply('Произошла ошибка при обработке команды. Подробности в консоли.');
             }
         });
+
 
         // Обработчик команды /pin
         bot.command('pin', async (ctx) => {
