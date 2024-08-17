@@ -11,6 +11,7 @@ const {summaryMessage} = require('./services/gptSummaryPin');
 const { createZoomMeeting } = require('./services/zoomService');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
+const { DateTime } = require('luxon');
 const Chat = require('./models/chatModel');
 
 
@@ -75,11 +76,9 @@ connectDB()
             ctx.editMessageText(`Проект ${projectName} (${projectId}) успешно выбран.`);
         });
 
-        // Функция для конвертации времени в московское время (UTC+3)
-        function convertToMoscowTime(utcDate) {
-            const moscowOffset = 3 * 60 * 60 * 1000; // Сдвиг на +3 часа в миллисекундах
-            const moscowDate = new Date(utcDate.getTime() - moscowOffset); // Теперь мы вычитаем 3 часа
-            return moscowDate;
+// Функция для конвертации времени в московское время (UTC+3) с использованием luxon
+        function convertToMoscowTime(parsedDate) {
+            return DateTime.fromJSDate(parsedDate).setZone('Europe/Moscow').toJSDate();
         }
 
 // Функция для форматирования даты в "человеческий" язык
@@ -111,10 +110,10 @@ connectDB()
                 const obj = JSON.parse(response);
                 if (!obj.success) return ctx.reply('Ошибка, загляните в консоль: ' + obj.reason);
 
-                // Парсинг даты с учетом московского часового пояса
+                // Парсинг даты с использованием chrono
                 const parsedDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
 
-                // Корректируем parsedDate, вычитая UTC+3 (московское время)
+                // Конвертируем время в московское с помощью luxon
                 const moscowDate = convertToMoscowTime(parsedDate);
 
                 // Обновляем дату в объекте
@@ -185,6 +184,7 @@ connectDB()
                 await ctx.reply('Произошла ошибка при обработке команды. Подробности в консоли.');
             }
         });
+
 
 
         // Обработчик команды /pin
