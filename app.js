@@ -77,28 +77,79 @@ connectDB()
 
         // Обработчик регистрации Zoom конференций
         bot.command('zoom', async (ctx) => {
-            // Извлекаем текст после команды /zoom
-            const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
-            const groupId = ctx.message.chat.id;
-            const projectName = await chatController.getProjectName(groupId);
-            console.log('Название проекта - ' + projectName);
-            console.log('Текст запроса - ' + messageText);
-            const response = await sendQuestion(projectName,messageText);
-            console.log('Ответ от GPT API - ' + response);
-            const obj = JSON.parse(response);
-            if(!obj.success) return ctx.reply('Ошибка, загляните в консоль:'+obj.reason);
-            const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true })
-            obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000);
-            console.log('Объект с конечной датой - ');
-            console.log(obj);
-            const createZoom = await createZoomMeeting(obj);
-            console.log('Ответ зума:')
-            console.log(createZoom)
-            await ctx.reply(JSON.stringify(obj), {
-                parse_mode: 'Markdown'
-            });
+            try {
+                // Извлекаем текст после команды /zoom
+                const messageText = ctx.message.text.replace('/zoom', '').replace('@hmns_sandbot', '').trim();
+                const groupId = ctx.message.chat.id;
+                const projectName = await chatController.getProjectName(groupId);
+                console.log('Название проекта - ' + projectName);
+                console.log('Текст запроса - ' + messageText);
 
+                // Отправляем запрос к GPT API
+                const response = await sendQuestion(projectName, messageText);
+                console.log('Ответ от GPT API - ' + response);
 
+                const obj = JSON.parse(response);
+                if (!obj.success) return ctx.reply('Ошибка, загляните в консоль: ' + obj.reason);
+
+                // Парсинг и корректировка даты
+                const utcDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
+                obj.data.date = new Date(utcDate.getTime() - 3 * 60 * 60 * 1000); // Корректируем на 3 часа
+                console.log('Объект с конечной датой - ', obj);
+
+                // Формируем сообщение для подтверждения встречи
+                const confirmText = `
+Вы хотите создать встречу в ZOOM со следующими параметрами:
+- Название: ${obj.data.project}
+- Дата проведения: ${obj.data.date.toISOString()}
+- Описание: ${obj.data.description}
+`;
+
+                // Создаем клавиатуру с кнопками "Создать" и "Отменить"
+                const keyboard = new InlineKeyboard()
+                    .text('Создать', 'create_zoom_meeting')
+                    .text('Отменить', 'cancel_zoom_meeting');
+
+                // Отправляем сообщение с параметрами и клавиатурой
+                const message = await ctx.reply(confirmText, {
+                    reply_markup: keyboard
+                });
+
+                // Обрабатываем нажатие на кнопки
+                bot.callbackQuery(['create_zoom_meeting', 'cancel_zoom_meeting'], async (callbackCtx) => {
+                    // Проверяем какая кнопка была нажата
+                    if (callbackCtx.match === 'create_zoom_meeting') {
+                        // Отправляем запрос на создание встречи в Zoom
+                        const createZoom = await createZoomMeeting(obj);
+                        console.log('Ответ Zoom:', createZoom);
+
+                        if (createZoom.success) {
+                            // Формируем сообщение с информацией о созданной встрече
+                            const meetingInfo = `
+Встреча успешно создана!
+- Название: ${createZoom.meetingDetails.topic}
+- Дата: ${createZoom.meetingDetails.start_time}
+- Ссылка на подключение: [Присоединиться](${createZoom.meetingDetails.join_url})
+- Пароль: ${createZoom.meetingDetails.password}
+`;
+
+                            // Обновляем исходное сообщение с результатом
+                            await callbackCtx.editMessageText(meetingInfo, { parse_mode: 'Markdown' });
+                        } else {
+                            await callbackCtx.reply('Ошибка при создании встречи: ' + createZoom.error);
+                        }
+                    } else if (callbackCtx.match === 'cancel_zoom_meeting') {
+                        // Отмена создания встречи
+                        await callbackCtx.editMessageText('Создание встречи отменено.');
+                    }
+
+                    // Закрываем инлайн-кнопки
+                    await callbackCtx.answerCallbackQuery(); // Подтверждаем обработку callback
+                });
+            } catch (error) {
+                console.error('Ошибка:', error);
+                await ctx.reply('Произошла ошибка при обработке команды. Подробности в консоли.');
+            }
         });
 
         // Обработчик команды /pin
