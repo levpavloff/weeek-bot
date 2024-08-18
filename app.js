@@ -118,6 +118,7 @@ connectDB()
 
                 // Конвертируем время в московское с помощью luxon
                 const moscowDate = convertToMoscowTime(parsedDate);
+                console.log('Московское время - ', moscowDate);
 
                 // Обновляем дату в объекте для отображения пользователю (в московском времени)
                 obj.data.date = parsedDate;
