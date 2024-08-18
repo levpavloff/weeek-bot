@@ -166,11 +166,15 @@ connectDB()
                             const meetingInfo = `
 ***Встреча в ZOOM запланирована!***
 
-***Название:*** ${createZoom.meetingDetails.topic}
+***${createZoom.meetingDetails.topic}***
+
 ***Дата встречи:*** ${humanMeetingDate}
 ***Комментарий:*** ${obj.data.comment || 'Отсутствует'}
 
 ***Пароль:*** \`${createZoom.meetingDetails.password}\`
+
+[${createZoom.meetingDetails.join_url}](${createZoom.meetingDetails.join_url})
+
 `;
 
                             // Формируем кнопки с ссылками
