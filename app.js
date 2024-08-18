@@ -143,6 +143,23 @@ connectDB()
                     reply_markup: keyboard
                 });
 
+                function generateCustomCalendarLink(meetingDetails) {
+                    const { topic, start_time, join_url, password } = meetingDetails;
+
+                    // Формируем дату в формате ISO (UTC)
+                    const encodedDate = encodeURIComponent(start_time);
+
+                    // Формируем описание, включая ссылку и пароль
+                    const description = `Ссылка: ${join_url}\nПароль: ${password}`;
+                    const encodedDescription = encodeURIComponent(description);
+
+                    // Формируем название события
+                    const encodedTitle = encodeURIComponent(topic);
+
+                    // Формируем финальную ссылку
+                    return `https://hmns-event.ru/?title=${encodedTitle}&date=${encodedDate}&description=${encodedDescription}`;
+                }
+
                 // Обрабатываем нажатие на кнопки
                 bot.callbackQuery(['create_zoom_meeting', 'cancel_zoom_meeting'], async (callbackCtx) => {
                     // Проверяем какая кнопка была нажата
@@ -162,25 +179,31 @@ connectDB()
 
                             // Формируем сообщение с информацией о созданной встрече
                             const meetingInfo = `
-Встреча успешно создана!
-- Название: ${createZoom.meetingDetails.topic}
-- Дата: ${humanMeetingDate}
-- Комментарий: ${obj.data.comment}
-- Ссылка на подключение: [Присоединиться](${createZoom.meetingDetails.join_url})
-- Пароль: ${createZoom.meetingDetails.password}
+***Встреча в ZOOM запланирована!***
+
+***Название:*** ${createZoom.meetingDetails.topic}
+***Дата встречи:*** ${humanMeetingDate}
+***Комментарий:*** ${obj.data.comment || 'Отсутствует'}
+
+***Пароль:*** \`${createZoom.meetingDetails.password}\`
 `;
 
+                            // Формируем кнопки с ссылками
+                            const inlineKeyboard = {
+                                inline_keyboard: [
+                                    [{ text: 'Подключиться к встрече', url: createZoom.meetingDetails.join_url }],
+                                    [{ text: 'Добавить в календарь', url: generateCalendarLink(createZoom.meetingDetails) }]
+                                ]
+                            };
+
                             // Обновляем исходное сообщение с результатом
-                            await callbackCtx.editMessageText(meetingInfo, { parse_mode: 'Markdown' });
+                            await callbackCtx.editMessageText(meetingInfo, { parse_mode: 'Markdown', reply_markup: inlineKeyboard });
                         } else {
                             await callbackCtx.reply('Ошибка при создании встречи: ' + createZoom.error);
                         }
-                    } else if (callbackCtx.match === 'cancel_zoom_meeting') {
-                        // Отмена создания встречи
-                        await callbackCtx.editMessageText('Создание встречи отменено.');
-                    }
 
-                    // Закрываем инлайн-кнопки
+
+                        // Закрываем инлайн-кнопки
                     await callbackCtx.answerCallbackQuery(); // Подтверждаем обработку callback
                 });
             } catch (error) {
