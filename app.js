@@ -12,6 +12,8 @@ const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomS
 const { getDuckTime } = require('./services/ducklingService');
 const chrono = require('chrono-node');
 const moment = require('moment-timezone');
+require('moment/locale/ru'); // Подключаем русский язык
+moment.locale('ru'); // Устанавливаем локаль по умолчанию на русский
 const Chat = require('./models/chatModel');
 
 
