@@ -135,6 +135,7 @@ connectDB()
 - Описание встречи: ${obj.data.description}
 - Комментарий: ${obj.data.comment}
 `;
+                //tse
 
                 // Создаем клавиатуру с кнопками "Создать" и "Отменить"
                 const keyboard = new InlineKeyboard()
