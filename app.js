@@ -10,7 +10,6 @@ const { sendQuestion } = require('./services/zoomGptApi');
 const {summaryMessage} = require('./services/gptSummaryPin');
 const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomService');
 const { getDuckTime } = require('./services/ducklingService');
-//const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 const { format, utcToZonedTime } = require('date-fns-tz');
 const Chat = require('./models/chatModel');
@@ -80,8 +79,7 @@ connectDB()
 // Функция для конвертации времени в московское время (UTC+3) с использованием luxon
         function convertToMoscowTime(parsedDate) {
             const timeZone = 'Europe/Moscow';
-            const moscowTime = utcToZonedTime(parsedDate, timeZone);
-            return moscowTime;
+            return utcToZonedTime(parsedDate, timeZone);
         }
 
 
