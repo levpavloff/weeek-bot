@@ -9,6 +9,7 @@ const cors = require('cors');
 const { sendQuestion } = require('./services/zoomGptApi');
 const {summaryMessage} = require('./services/gptSummaryPin');
 const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomService');
+const { getDuckTime } = require('./services/ducklingService');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
 const { DateTime } = require('luxon');
@@ -115,8 +116,10 @@ connectDB()
                 const obj = JSON.parse(response);
                 if (!obj.success) return ctx.reply('Ошибка, загляните в консоль: ' + obj.reason);
 
+                const duckTime = await getDuckTime(obj.data.date + ' MSK');
+
                 // Парсинг даты с использованием chrono
-                const parsedDate = chrono.parseDate(obj.data.date, new Date(), { forwardDate: true });
+                const parsedDate = chrono.parseDate(duckTime, new Date(), { forwardDate: true });
 
                 // Конвертируем время в московское с помощью luxon
                 const moscowDate = convertToMoscowTime(parsedDate);
