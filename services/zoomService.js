@@ -33,6 +33,7 @@ async function getAccessToken() {
 // Пример использования токена для создания встречи
 async function createZoomMeeting(meetingParams) {
     const accessToken = await getAccessToken();
+    console.log(accessToken);
     const { project, date, description, participants } = meetingParams.data;
     console.log(meetingParams);
     const meetingData = {
