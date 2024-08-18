@@ -90,7 +90,7 @@ connectDB()
 // Функция для форматирования даты в "человеческий" язык
         function formatHumanReadableDate(date) {
             const options = {
-                weekday: 'long',
+                weekday: 'short',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -125,7 +125,7 @@ connectDB()
                 const moscowDate = convertToMoscowTime(parsedDate);
 
                 // Обновляем дату в объекте для отображения пользователю (в московском времени)
-                obj.data.date = moscowDate;
+                obj.data.date = parsedDate;
 
                 console.log('Объект с конечной датой - ', obj);
 
