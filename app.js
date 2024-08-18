@@ -11,7 +11,7 @@ const {summaryMessage} = require('./services/gptSummaryPin');
 const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomService');
 const { getDuckTime } = require('./services/ducklingService');
 const chrono = require('chrono-node');
-const { format, utcToZonedTime } = require('date-fns-tz');
+const moment = require('moment-timezone');
 const Chat = require('./models/chatModel');
 
 
@@ -78,10 +78,8 @@ connectDB()
 
 // Функция для конвертации времени в московское время (UTC+3) с использованием luxon
         function convertToMoscowTime(parsedDate) {
-            const timeZone = 'Europe/Moscow';
-            return utcToZonedTime(parsedDate, timeZone);
+            return moment.tz(parsedDate, 'Europe/Moscow').format(); // Преобразуем и возвращаем в формате ISO
         }
-
 
 
 // Функция для форматирования даты в "человеческий" язык
@@ -132,9 +130,10 @@ connectDB()
                 // Формируем сообщение для подтверждения встречи
                 const confirmText = `
 Вы хотите создать встречу в ZOOM со следующими параметрами:
-- Название: ${obj.data.project}
+- Проект: ${obj.data.project}
 - Дата проведения: ${humanReadableDate}
-- Описание: ${obj.data.description}
+- Описание встречи: ${obj.data.description}
+- Комментарий: ${obj.data.comment}
 `;
 
                 // Создаем клавиатуру с кнопками "Создать" и "Отменить"
@@ -169,6 +168,7 @@ connectDB()
 Встреча успешно создана!
 - Название: ${createZoom.meetingDetails.topic}
 - Дата: ${humanMeetingDate}
+- Комментарий: ${obj.data.comment}
 - Ссылка на подключение: [Присоединиться](${createZoom.meetingDetails.join_url})
 - Пароль: ${createZoom.meetingDetails.password}
 `;
