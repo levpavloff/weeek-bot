@@ -177,7 +177,7 @@ connectDB()
                             const inlineKeyboard = {
                                 inline_keyboard: [
                                     [{ text: 'Подключиться к встрече', url: createZoom.meetingDetails.join_url }],
-                                    [{ text: 'Добавить в календарь', url: generateCalendarLink(createZoom.meetingDetails) }]
+                                    [{ text: 'Добавить в календарь', url: generateCustomCalendarLink(createZoom.meetingDetails) }]
                                 ]
                             };
 
