@@ -83,9 +83,9 @@ connectDB()
 
 
 // Функция для форматирования даты в "человеческий" язык
-        function formatHumanReadableDate(date) {
-            const date = moment.tz(dateString, 'Europe/Moscow'); // Устанавливаем московский часовой пояс
-            return date.format('ddd, DD MMMM YYYY, HH:mm'); // Форматируем дату на русском языке
+        function formatHumanReadableDate(dateString) {
+            const dateMoment = moment.tz(dateString, 'Europe/Moscow'); // Устанавливаем московский часовой пояс
+            return dateMoment.format('ddd, DD MMMM YYYY, HH:mm'); // Форматируем дату на русском языке
         }
 
         bot.command('zoom', async (ctx) => {
