@@ -143,22 +143,7 @@ connectDB()
                     reply_markup: keyboard
                 });
 
-                function generateCustomCalendarLink(meetingDetails) {
-                    const { topic, start_time, join_url, password } = meetingDetails;
 
-                    // Формируем дату в формате ISO (UTC)
-                    const encodedDate = encodeURIComponent(start_time);
-
-                    // Формируем описание, включая ссылку и пароль
-                    const description = `Ссылка: ${join_url}\nПароль: ${password}`;
-                    const encodedDescription = encodeURIComponent(description);
-
-                    // Формируем название события
-                    const encodedTitle = encodeURIComponent(topic);
-
-                    // Формируем финальную ссылку
-                    return `https://hmns-event.ru/?title=${encodedTitle}&date=${encodedDate}&description=${encodedDescription}`;
-                }
 
                 // Обрабатываем нажатие на кнопки
                 bot.callbackQuery(['create_zoom_meeting', 'cancel_zoom_meeting'], async (callbackCtx) => {
@@ -493,7 +478,22 @@ connectDB()
 
 
 
+        function generateCustomCalendarLink(meetingDetails) {
+            const { topic, start_time, join_url, password } = meetingDetails;
 
+            // Формируем дату в формате ISO (UTC)
+            const encodedDate = encodeURIComponent(start_time);
+
+            // Формируем описание, включая ссылку и пароль
+            const description = `Ссылка: ${join_url}\nПароль: ${password}`;
+            const encodedDescription = encodeURIComponent(description);
+
+            // Формируем название события
+            const encodedTitle = encodeURIComponent(topic);
+
+            // Формируем финальную ссылку
+            return `https://hmns-event.ru/?title=${encodedTitle}&date=${encodedDate}&description=${encodedDescription}`;
+        }
 
 
         // Запуск сервера
