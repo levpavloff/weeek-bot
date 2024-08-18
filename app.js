@@ -12,7 +12,7 @@ const { createZoomMeeting, getAllScheduledMeetings } = require('./services/zoomS
 const { getDuckTime } = require('./services/ducklingService');
 //const {sendYaGPT} = require('./services/yaGPTzoom');
 const chrono = require('chrono-node');
-const { DateTime } = require('luxon');
+const { format, utcToZonedTime } = require('date-fns-tz');
 const Chat = require('./models/chatModel');
 
 
@@ -79,13 +79,12 @@ connectDB()
 
 // Функция для конвертации времени в московское время (UTC+3) с использованием luxon
         function convertToMoscowTime(parsedDate) {
-            return DateTime.fromJSDate(parsedDate).setZone('Europe/Moscow').toJSDate();
+            const timeZone = 'Europe/Moscow';
+            const moscowTime = utcToZonedTime(parsedDate, timeZone);
+            return moscowTime;
         }
 
-// Функция для конвертации московского времени в UTC перед отправкой в Zoom
-        function convertToUtcFromMoscow(moscowDate) {
-            return DateTime.fromJSDate(moscowDate).setZone('UTC').toJSDate();
-        }
+
 
 // Функция для форматирования даты в "человеческий" язык
         function formatHumanReadableDate(date) {
@@ -154,9 +153,7 @@ connectDB()
                 bot.callbackQuery(['create_zoom_meeting', 'cancel_zoom_meeting'], async (callbackCtx) => {
                     // Проверяем какая кнопка была нажата
                     if (callbackCtx.match === 'create_zoom_meeting') {
-                        // Преобразуем московское время в UTC перед отправкой в Zoom
-                        const utcDateForZoom = convertToUtcFromMoscow(moscowDate);
-                        obj.data.date = utcDateForZoom;
+
 
                         // Отправляем запрос на создание встречи в Zoom
                         const createZoom = await createZoomMeeting(obj);
