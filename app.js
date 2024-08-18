@@ -201,9 +201,12 @@ connectDB()
                         } else {
                             await callbackCtx.reply('Ошибка при создании встречи: ' + createZoom.error);
                         }
+                    } else if (callbackCtx.match === 'cancel_zoom_meeting') {
+                        // Отмена создания встречи
+                        await callbackCtx.editMessageText('Создание встречи отменено.');
+                    }
 
-
-                        // Закрываем инлайн-кнопки
+                    // Закрываем инлайн-кнопки
                     await callbackCtx.answerCallbackQuery(); // Подтверждаем обработку callback
                 });
             } catch (error) {
