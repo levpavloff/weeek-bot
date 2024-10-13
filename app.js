@@ -22,6 +22,11 @@ const app = express();
 app.use(cors());
 const port = process.env.PORT || 2520;
 
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
 // Используем bodyParser для обработки JSON-запросов
 app.use(bodyParser.json());
 
